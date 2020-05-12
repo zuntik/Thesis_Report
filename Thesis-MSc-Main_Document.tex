@@ -39,6 +39,7 @@
 % -----------------------------------------------------------------------------
 \input{Thesis-MSc-Preamble_commands}
 %
+\addbibresource{Thesis-MSc-Bibliography.bib}
 % #############################################################################
 % #############################################################################
 \begin{document}
@@ -163,70 +164,47 @@
 % If Printing on DOUBLE SIDED pages, the second page should be white.
 % Otherwise, comment the following command:
 \cleardoublepage
-%
-%Chapter 2
-\input{./Chapters/Thesis-MSc-Chapter_2.tex}
-% If Printing on DOUBLE SIDED pages, the second page should be white.
-% Otherwise, comment the following command:
-\cleardoublepage
-%
-%Chapter 3
-\input{./Chapters/Thesis-MSc-Chapter_3.tex}
-% If Printing on DOUBLE SIDED pages, the second page should be white.
-% Otherwise, comment the following command:
-\cleardoublepage
-%
-%Chapter 4
-\input{./Chapters/Thesis-MSc-Chapter_4.tex}
-% If Printing on DOUBLE SIDED pages, the second page should be white.
-% Otherwise, comment the following command:
-\cleardoublepage
-%
-%Chapter 5
-\input{./Chapters/Thesis-MSc-Chapter_5.tex}
-% If Printing on DOUBLE SIDED pages, the second page should be white.
-% Otherwise, comment the following command:
-\cleardoublepage
-%
-%Chapter 6
-\input{./Chapters/Thesis-MSc-Chapter_6.tex}
-% If Printing on DOUBLE SIDED pages, the second page should be white.
-% Otherwise, comment the following command:
-\cleardoublepage
+%%
+%%Chapter 2
+%\input{./Chapters/Thesis-MSc-Chapter_2.tex}
+%% If Printing on DOUBLE SIDED pages, the second page should be white.
+%% Otherwise, comment the following command:
+%\cleardoublepage
+%%
+%%Chapter 3
+%\input{./Chapters/Thesis-MSc-Chapter_3.tex}
+%% If Printing on DOUBLE SIDED pages, the second page should be white.
+%% Otherwise, comment the following command:
+%\cleardoublepage
+%%
+%%Chapter 4
+%\input{./Chapters/Thesis-MSc-Chapter_4.tex}
+%% If Printing on DOUBLE SIDED pages, the second page should be white.
+%% Otherwise, comment the following command:
+%\cleardoublepage
+%%
+%%Chapter 5
+%\input{./Chapters/Thesis-MSc-Chapter_5.tex}
+%% If Printing on DOUBLE SIDED pages, the second page should be white.
+%% Otherwise, comment the following command:
+%\cleardoublepage
+%%
+%%Chapter 6
+%\input{./Chapters/Thesis-MSc-Chapter_6.tex}
+%% If Printing on DOUBLE SIDED pages, the second page should be white.
+%% Otherwise, comment the following command:
+%\cleardoublepage
 %
 % -----------------------------------------------------------------------------
 % BIBLIOGRAPHY
 % Add the Bibliography to the PDF table of contents (not the document table of contents)
 \pdfbookmark[0]{Bibliography}{bib}
+\printbibliography%
 % The bibliography style sheet
-% Chose your preferences on the format of the entries and the Labels:
-% IEEEtran: Used in general (recommended for IST Thesis)
-%           Entries are labelled and sorted by appearance in the document
-%           Labels are Numeric inside square brackets
-\bibliographystyle{IEEEtran}
-%
-% Apalike:  Entries formatted alphabetically, last name first, with identation
-%           Labels with Autor's Name and Year inside square brackets
-%\bibliographystyle{apalike}
-%
-% Alpha:    Entries formatted with Autor's Name and Year, hanging identation
-%           Labels with Autor's abbr. Names and Year inside square brackets
-%\bibliographystyle{alpha}
-%
-% Acm:     Entries formatted with Autor's Name (small Caps), hanging identation
-%          Labels are Numeric inside square brackets
-%\bibliographystyle{acm}
-% The following command resets the 'emphasis' style for bibliography entries
-\normalem
-% Name of your BiBTeX file
-\bibliography{./Thesis-MSc-Bibliography} % Put here your own filename
-%
-% The following command modifies the 'emphasis' style for bibliography entries
-\ULforem
-% If Printing on DOUBLE SIDED pages, the second page should be white.
-% Otherwise, comment the following command:
-\cleardoublepage
-%
+%% If Printing on DOUBLE SIDED pages, the second page should be white.
+%% Otherwise, comment the following command:
+\cleardoublepage%
+
 % -----------------------------------------------------------------------------
 % HERE GO THE APPENDIXES IF REQUIRED
 % If not required just comment the blocks

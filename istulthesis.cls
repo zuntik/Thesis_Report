@@ -32,7 +32,7 @@
 %
 \DeclareOption{fleqn}{ \PassOptionsToClass{fleqn}{report} }
 \DeclareOption{leqno}{ \PassOptionsToClass{leqno}{report} }
-\DeclareOption{openbib}{ \PassOptionsToClass{openbib}{report} }
+%\DeclareOption{openbib}{ \PassOptionsToClass{openbib}{report} }
 \DeclareOption{draft}{ \PassOptionsToClass{draft}{report} }
 \DeclareOption{final}{ \PassOptionsToClass{final}{report} }
 \DeclareOption{openright}{ \PassOptionsToClass{openright}{report} }
