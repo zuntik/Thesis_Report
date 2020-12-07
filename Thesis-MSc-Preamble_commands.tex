@@ -27,7 +27,14 @@
 % -----------------------------------------------------------------------------
 % PACKAGE biblatex:
 % -----------------------------------------------------------------------------
-\usepackage[backend=biber]{biblatex}
+\usepackage[backend=biber, style=ieee]{biblatex}
+
+% \renewcommand*{\bibfont}{\footnotesize}
+% \setlength{\biblabelsep}{\labelsep}
+% \setlength{\bibitemsep}{\IEEEbibitemsep}
+
+\appto{\bibsetup}{\sloppy}
+%\appto{\bibsetup}{\raggedright}
 
 
 % -----------------------------------------------------------------------------
@@ -79,7 +86,8 @@
 % Package 'subfigure' allows to place figures within figures with own caption. 
 % For each of the subfigures use the command \subfigure.
 \usepackage{graphicx}
-\usepackage[hang,small,bf,tight]{subfigure}
+% \usepackage[hang,small,bf,tight]{subfigure}
+\usepackage{subcaption}
 %
 % -----------------------------------------------------------------------------
 % PACKAGE caption:
@@ -293,10 +301,10 @@
 \setcounter{secnumdepth} {5}
 \setcounter{tocdepth} {5}
 \renewcommand{\thesubsubsection}{\thesubsection.\Alph{subsubsection}}
-\renewcommand{\subfigtopskip}{0.3 cm}
-\renewcommand{\subfigbottomskip}{0.2 cm}
-\renewcommand{\subfigcapskip}{0.3 cm}
-\renewcommand{\subfigcapmargin}{0.2 cm}
+%\renewcommand{\subfigtopskip}{0.3 cm}
+%\renewcommand{\subfigbottomskip}{0.2 cm}
+%\renewcommand{\subfigcapskip}{0.3 cm}
+%\renewcommand{\subfigcapmargin}{0.2 cm}
 %
 % -----------------------------------------------------------------------------
 % PACKAGE minitoc:
@@ -354,6 +362,16 @@
 % Now put it all together as a command \fancychapter
 \newcommand{\fancychapter}[1]{\chapter{#1}\vfill\minitoc\pagebreak}
 %
+% -----------------------------------------------------------------------------
+% PACKAGE sinutx: for si unites
+% -----------------------------------------------------------------------------
+\usepackage{siunitx}
+
+% -----------------------------------------------------------------------------
+% PACKAGE float: to support images on specific locations
+% -----------------------------------------------------------------------------
+\usepackage{float}
+
 % #############################################################################
 % ADDITIONAL COMMANDS AND CONFIGURATIONS
 % #############################################################################
