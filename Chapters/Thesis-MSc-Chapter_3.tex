@@ -8,9 +8,8 @@
 % The following line allows to ref this chapter
 \label{chap:autonomousvehiclemodels}
 
-\par In this chapter equations that rule the motion of an autonomous marine vehicle are derived. To this end, the coordinate frames will be defined initially(\ref{sec:refframes}). What follows will be the general vehicle motion equations for the dubin's car (sec:dubincarequations). Finally, the motion equations for the MEDUSA model are presented (the characterization of the vehicle MEDUSA (\ref{sec:medusamodelequations}). The models presented here rely on parameters specific for each vehicle, which will not be discuessed in this chapter.
-
-\par In this chapter we address the mathmatical models that describe the motion of vehicles in 2 dimensional space.
+\par In this chapter equations that rule the motion of an autonomous marine vehicle are derived. But first, the coordinate frames will be defined (\ref{sec:refframes}). Then the general vehicle motion equations for the dubin's car (\ref{sec:dubincarequations}). Finally, the motion equations for the MEDUSA model are presented (the characterization of the vehicle MEDUSA (\ref{sec:medusamodelequations}). 
+\par This chapter will focus primarily on dynamics in a two dimensional space.
 
 
 \section{Reference Frames and Notaion}
@@ -85,30 +84,75 @@ In compact form yields
 \par A simple kinematic car model for the systems is: 
 \begin{equation}
     \begin{gathered}
-        \dot{x} = v \cos \psi \\
-        \dot{y} = v \sin \psi \\
-        \dot{\psi} = w
+        \dot{x} = u \cos \psi \\
+        \dot{y} = u \sin \psi \\
+        \dot{\psi} = \omega
     \end{gathered}
 \end{equation}
-where $(x,y)$ is the car's position, $\psi$ is the car's heading, $v$ is the car's speed, and $w$ is the car's turn rate.
+where $(x,y)$ is the car's position, $\psi$ is the car's heading, $u$ is the car's speed, and $\omega$ is the car's turn rate.
 
 \par The dynamics will be the simplest possible: basic accelerations.
 \begin{equation}
     \begin{gathered}
-        \dot{w} = r \\
-        \dot{v} = a
+        \dot{\omega} = r \\
+        \dot{u} = a
     \end{gathered}
 \end{equation}
 
-\par Is differentially flat \cite{fliess1995flatness}.
-
-
+\par This model is differentially flat because for any continuous $x$ and $y$, all of the other variables can be derived.
+\par The tangent and rotational speeds can be obtained by
+    
+\begin{equation}
+\begin{split}
+    & \begin{bmatrix}
+        \dot{x} \\ \dot{y}
+    \end{bmatrix} = 
+    \begin{bmatrix}
+        \cos(\psi) & - \sin(\psi) \\
+        \sin(\psi) & \cos(\psi)
+    \end{bmatrix} \cdot
+    \begin{bmatrix}
+        u \\ 0
+    \end{bmatrix} \Leftrightarrow  \\
+    & \begin{bmatrix}
+        u \\ 0
+    \end{bmatrix} = 
+    \begin{bmatrix}
+        \cos(\psi) & - \sin(\psi) \\
+        \sin(\psi) & \cos(\psi)
+    \end{bmatrix}^{-1} \cdot
+    \begin{bmatrix}
+        \dot{x} \\ \dot{y}
+    \end{bmatrix} \Leftrightarrow \\
+    & \begin{bmatrix}
+        u \\ 0
+    \end{bmatrix} = 
+    \begin{bmatrix}
+        \cos(\psi) & \sin(\psi) \\
+        - \sin(\psi) & \cos(\psi)
+    \end{bmatrix} \cdot
+    \begin{bmatrix}
+        \dot{x} \\ \dot{y}
+    \end{bmatrix}
+\end{split}
+\end{equation}
+\par $\psi$ can be obtained by integrating $\omega$, however, because $\omega$ is not a flat output, $\psi$ is derived as
+\begin{equation}
+    \psi = \arctan{\frac{\dot{y}}{\dot{x}}}
+\end{equation}
+\par Finally, tangent acceleration, $\tau_1$ and torque, $\tau_2$ can be derived from $u$ and $\omega$:
+\begin{equation}
+    \tau_1 = \dot{u}
+\end{equation}
+\begin{equation}
+    \tau_2 = \dot{\omega}
+\end{equation}
+which can be used as inputs to the system.
 
 \section{Medusa}
 \label{sec:medusamodelequations}
-\par Is not differentially flat 
 
-\par The kinematics trats only the gemotrical aspects of motion, and relates the velocities with poisiton. Using the coordinate frames notation in Section \ref{sec:refframes}, the kinematic equation can be expressed as
+\par The kinematics envolves only the gemotrical aspects of motion, and relates the velocities with poisiton. Using the coordinate frames notation in Section \ref{sec:refframes}, the kinematic equation can be expressed as
 \begin{equation}
     \dot{\eta} = J(\eta)\nu
 \end{equation}
@@ -302,5 +346,3 @@ and the  inputs from the dynamics:
 \end{equation}
 because this equation is what guarantees $\tau_v = 0$. If $\tau_v \neq 0$, the vehicle will have to be fully actuated for the vehicle to follow it.
 
-
-\todo{calculation of the limits of acceleration of the medusa model}
