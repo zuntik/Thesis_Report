@@ -4,7 +4,7 @@
 \label{chap:theory}
 %\todo[color=green!40, author=Thomas, fancyline]{choose best title for chapter}{}
  
-\par In this chapter, methods for trajectory optimisation will be reviewed. These methods are generic, i.e., they can be applied to a wide range of dynamic systems. In this study, they will be applied to the control of a simple model for a vehicle in both one and two dimensions. A good understanding of motion planning for single vehicles will be necessary before extending to multiple vehicles.
+\par In this chapter, methods for trajectory optimisation will be reviewed. These methods are generic, i.e., they can be applied to a wide range of dynamic systems. In this study, they will be applied to the control of a simple model for a vehicle in both one dimension. A good understanding of motion planning for single vehicles will be necessary before extending to multiple vehicles.
 
 \section{The Optimisation Probelm}
 
@@ -393,6 +393,44 @@ where $U_{\text{max}}$ and $U_{\text{min}}$ are given are given by $\pm 1$. Here
 \end{figure}
 
 
+\section{Monomial Polynomials}
+
+\par Another way to describe trajectories is by using polynomials. If an optimal trajectory can be modelled by a polynomial, then it can be parameterised in terms of the polynomial's coefficients. As a result, the optimisation problem tends to have a much smaller search space compared to, for example, shooting methods because with a relatively low order of polynomial, a whole trajectory over time $t\in [0,T]$ can be obtained will a relatively good cost. 
+\par Polynomial methods are especially suited to deal with \textit{differentially flat systems}\cite{sabetghadam2018cooperative}.   In, differentially flat systems, the state and input variables can be directly expressed, without integrating any differential equation, in terms of the flat output and a finite number of its derivatives\cite{fliess1995flatness}. This means that with coefficients that describe just the flat output it is possible to describe all of the other variables of the system, thus resulting in a reduction of the number of parameters to be optimised.
+
+\par The solution provided by the Matlab function \texttt{fmincon} for this method will be a polynomial $\overline{p}$ for $x_1$. Once the optimal coefficients have been obtained the trajectories for $x_1$, $x_2$ and $u$ can be obtained by polynomial derivation and evaluation. This is possible because the system is differentially flat. These polynomials are related in the system of equations
+\begin{equation}
+    \label{eq:polys_of_double_integrator}
+    \begin{cases}
+        u (t) = a_0 + a_1 t + a_2 t^2 + \ (\dots) \\
+        x_2 (t) = v_0 + a_0 t + \frac{a_1}{2} t^2 + \frac{a_2}{3} t^3 + \ (\dots)  \\
+        x_1 (t) = p_0 + v_0 t + \frac{a_0}{2} t^2 + \frac{a_1}{6} t^3 + \frac{a_2}{12} t^4 + \ (\dots)
+    \end{cases}
+\end{equation}
+ The cost function will be the same as the one used for the analytic method, and with the same initial conditions (see \ref{eq:my_cost} and \ref{eq:initial_conds}).
+\par Figure \ref{fig:solution_pol} shows the solution of a polynomial optimisation problem for a polynomial of order 7. Higher orders where attempted but they took too long to converge. %Here, the variable to optimise $\overline{p}$ contains the coefficients that describes $x_1$. Because the system is deferentially flat, both $x_2$ and $u$ can be obtained as a function of $\overline{p}$  and will also be polynomials.
+
+
+\par In order to guarantee the initial and final conditions of the state variable $x$, the linear constraint that has to be introduced is given by
+\begin{equation}
+    \label{eq:pol_equality}
+    \underbrace{\begin{bmatrix}
+    0 & 0 & \dots & 0 & 1 \\
+    0 & 0 & \dots & 1 & 0 \\
+    T^N & T^{N-1} & \dots & T & 0 
+    \end{bmatrix}}_\text{Aeq} \overline{p}  =
+    \underbrace{\begin{bmatrix} x_1^i \\ x_2^i        \\ 0 \end{bmatrix}}_\text{beq}
+\end{equation}
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.8\textwidth]{Images/solution_pol.jpg}
+\caption{Direct Optimisation with Polynomials \\ Polynomial order: 7 \\
+Computation time: \SI{1.33}{\second}}
+\label{fig:solution_pol}
+\end{figure}
+
 
 
 \section{Bezier Curves}
@@ -556,61 +594,32 @@ The convex hull property of these polynomials will prove useful in an algorithm 
 \par Just as with monomial polynomials, when these Bernstein polynomials are applied to differentially flat systems, a reduction of the number of parameters to optimise is possible because with just a flat output, all state variables can be derived. If the system is not differentially flat, then parameters for all state variables need to be defined and optimised but will be subject to the constrained imposed by the system's dynamics.
 The optimization problems developed for motion planning in this work center around the usage of what is known as Bernstein polynomials.
 
-\section{Minimum Distance Between Trajectories}
-\par For $N_v$ vehicles, any of ${N_v \choose 2}$ pairs could lead to a collision, therefor, all pairs must be tested, which means a quadratic complexity, therefor, finding fast algorithms to calculate the distance between each pair of trajectories becomes essential.
-\par The easiest method of guaranteeing that the minimum distance between a pair of vehicles is always above a certain value is by calculating the minimum possible distance between each pair of $N_v$ vehicles, which yields a total of ${N_v \choose 2}$ calculations. If \ac{PF} is used, then the minimum distance between the paths must be greated than a certain value. As a result, these paths cannot intersect. If \ac{TT} is used, then the minimum distance between vehilces will depend on time $t \in [0 T]$, which means that the trajectories must intersect in space but not in time. 
+\par The solution obtained by the Matlab function \texttt{fmincon} will provide the coefficients $\overline{p}$ for the Bernstein polynomial of state variable $x_1$. 
 
-\subsection{Sampling Trajectories}
+\par Figure \ref{fig:bernstein_1d} shows the solution for the same quadratic optimisation problem and with the same initial conditions as the previous sections. The red circles in the figure show the distribution of the obtained coefficients. The resulting polynomial has order 14.
 
-\par Given that this thesis will focus on the usage of \ac{TT} and not \ac{PF}, methods to calculate minimum distances throughout time will be discussed, i.e., minimum distance between trajectories.
-\par The most straightforward way to calculate the minimum distance between two trajectories is to sample each trajectory and calculate the euclidean distance between time equivalent samples. The smallest yields the shortest distance. This method, however, is not perfect because the finer the samples, the more accurate is the result. 
-\par One thing to note, however, is that super accurate results of minimum distance between trajectories are not necessary. If, besides knowing the position of the vehicle at a sample, we also know the maximum tangent speed between that sample and the next, then the distance to the other vehicle cannot deviate more than a certain determinable value between those 2 points. It will be smaller than the calculated distance if the vehicles are moving towards eachother. The choice of number of samples will determine how big this deviation can be. The opitmisation algorithm will stop once it finds a minimum distance that is greater than a certain value, therefor, the number of samples must be big enough such that the deviation is relatively small when compared to the desired minimum distance. 
-\par For example, an optimisation problem specifies a minimum distance between 2 vehicles of \SI{1}{\meter}. These vehicles are limited to \SI{1}{\meter\per\second}. At a certain point in time between 2 samples, they can be closer to eachother than they are at the samples, so lets assume the worst case scenerio: half of the time between samples is spent moving towards eachother at maximum speed, which imples moving away from eachother during the other half of time at maximum speed, therefor, if the time sample is \SI{10}{\milli\second}, during \SI{5}{\milli\second} the vehicles can travel \SI{1}{\centi\meter} towards eachother, at the relative speed of \SI{2}{\meter\per\second}, which is a \SI{1}{\percent} deviation from the established minimum distance of \SI{1}{\meter}. If the optimisation problem is reformulated to guranatee \SI{1.01}{\meter}, then, with samples spaced by \SI{10}{\milli\second}, a successful optimisation solution guarantees a minimum distance between vehicles of \SI{1}{\meter}. which means a total of 100 samples per second of runtime.
-
-
-\subsection{Bezier Curve to a point}
-\label{sec:bezcurvetopoint}
-
-\par The next method is based on calculating the minimum distance between Bezier curves \cite{chang2011computation}. This algorithm is addapted to calculate the minimum distance between a curve and a polygon. By subtracting one trajectory to another, which for Bezier curves is explained in section \ref{sec:bezcurves}, finding the minimum distance between trajectories gets translated to finding the closest point of this subtraction curve to the origin. The origin can be interpreted as a 1 point convex shape, therefor, what follows is a brief explanation of an iterative algorithm to calculate the minimum distance of a Bezier curve to a polygon, which will also be used to do collision avoidance with arbitrary convex shapes.
-
-\par This algorithm consists in recursively breaking down the trajectory into halves by obtaining a new set of control point for each half via de deCasteljau algorithm. For each half, two values are calculated: an upper bound of the minimum distance and a lower bound. The upper bound for the minimum distance will be the closest endpoint of the segment to the polygon, a lower bound is the closest point of the convex hull of the new control points to the polygon. The exit condition of the recursion is when the lower bound is relatively small when compared to the upper bound. The lower bound may be zero if the shapes intersect, which has no influence on the execution of the algorithm. If the exit condition isn't met, the recursion is repeated and the returned value is the smallest of the upper bound along with the time at which the smallest value was found.
-
-\subsection{GJK Algorithm}
-\label{sec:gjkalg}
-
-\par The \ac{GJK} algorithm is an effitiend algorithm to calculate minimum distance between arbitrary convex shapes in any dimension. 
-\par The \ac{GJK} algorithm relies heavily on a concept called the Minkowski Sum, but, because the difference operator is used for this algorithm, instead of the sum, the term Minkowski difference will be used. For two shapes $A$ and $B$, their Minkowski Difference is given by
+\par In order to guarantee that the initial and final conditions are respected, the linear constraint that has to be introduced is given by
 \begin{equation}
-    D = A - B = \{a-b|a\in A, b\in B\}
+    \label{eq:bern_equality}
+    \underbrace{\begin{bmatrix}
+        1 & 0 & 0 & \dots & 0 \\
+        \frac{n}{T} & -\frac{n}{T} & 0 & \dots & 0 \\
+        0 & 0 & 0 & \dots & 1 \end{bmatrix}}_{\text{Aeq}_{\text{1D}}} \overline{p} =
+    \underbrace{\begin{bmatrix}
+        x_0^i \\ x_1^i \\ 0\end{bmatrix}}_{\text{beq}_{\text{1D}}}
 \end{equation}
-where $D$ is a new convex shape given by the subtraction of every point in $A$ by every point in $B$.
-Figure \todo{figure of 2 intersecting shapes plus figure } shows 2 shapes on the left handside which intersect and the resulting Minkowski Difference on the right hand side. Figure shows two shapes that do not intersect and their resulting Minkowski Difference. Notice how the second Minkowski Difference has an identical shape to the first, only differing on its position.
-If the Minkowski Difference contains the origin, then the two shapes have common points, i.e., intersect, because the resulting subtraction is zero. As a result, the \ac{GJK} algorithm is a two part problem: first detect intersection, by testing if the Minkowski Difference contains the origin, then, if it does not, the closest points between $A$ and $B$ result in a Minkowski Point that is closest to the origin, therefor, the second part part of the problem is to look for that closest point to the origin.
-\par For a N-D Minkowski Difference, if a convex shape of up to N+1 vertices that surrounds the origin is found, then the shapes $A$ and $B$ intersect. This shape with up to N+1 vertices is known as a simplex. For 2-D Minkowski Differences, the simplexes can be a point (1 vertex), a line segment (2 vertices) and a triangle (3 vertices). For 3-D spaces, the simplexes can be the same as in 2-D spaces with the addition of a tetrahedron (4 vertices).
-\par The key to \ac{GJK}'s effitiency is to find points in the Minkowski difference that are the best candidates to be in a simplex that can contain the origin. 
-\par A support function returns the farthest point in some direction. The resulting point is known as the support point. Finding a support point in the Minkowski Difference along direction $d$ is the same as subtracting the support point of $A$ along $d$ and $B$ along $d$. 
-\par Choosing the farthest point in a direction has significance because it creates a simplex who contains a maximum area therefore increasing the chance that the algorithm exits quickly. In addition, all the points returned this way are on the edge of the Minkowski Difference and therefore if a point past the origin along some direction cannot be added, the Minkowski Difference cannot contain the origin. This increases the chances of the algorithm exiting quickly in non-intersection cases.
-
-\par Let $W_k$ be the set of vertices of the simplex constructed in the $k^{th}$ iteration, and $v_k$ as the point in the simplex closest to the origin. Initially, $W_0=\varnothing$, and $v_0$ is an arbitrary point of the Minkowski Difference. Since each $v_k$ is contained in the Minkowski Difference, the length of $v_k$ must be an upper bound for the distance.
-\par \ac{GJK} generates a sequence of simplices in the following way. In each iteration step, a vertex $w_k = s_{A-B}(-v_k)$ is added to the simplex, with the objective of surrounding the origin. If the simplex contains the origin, then the program interrupts because the shapes intersect. If it's proven that the Minkowski Difference cannot contain the origin because the last added vertex did not move "beyond" the origin, then program interrupts and moves on to finding the minimum distance to the origin. If intersection is not proven yet, the new $v_{k+1}$ is perpendicular to the vector given by the last vertex with the one before that, or with the last with the third from the last, if availabe, depending on which has a dot product greater than 0, and the not used vertex gets removed from the simplpex. Alternatively, if no intersection is proven, the new $v_{k+1}$ is the point in the convex hull of $W_k\cup \{w_k\}$ closest to the origin and $W_{k+1}$ becomes the smallest sub-simplex of $W_k\cup \{w_k\}$ that contains $v_{k+1}$.
 
 
-\subsection{Directed EPA}
-\label{sec:epaalg}
-
-% https://graphics.stanford.edu/courses/cs468-01-fall/Papers/van-den-bergen.pdf
-
-\par If two convex shapes intersect, the \ac{GJK} algorithm cannot provide collision information like the penetration depth and vector. One algorithm that provides this information is the \ac{EPA}.
-A slight modification for the \ac{EPA} algorithm is proposed here. It will be refered as the \ac{DEPA}, whose objective is to find the penetration of one convex shape relative to another along a specific direction $d$, while the \ac{EPA} algorithm finds the shortest vector such that the shapes no longer collide. The penetration along a direction is the length of dislocation that the second shape would have to move so that the two shapes no longer collide. 
-\par The shapes intersect when the Minkowski contains the origin, therefor, the \ac{EPA} or the slight variant shown here have as objective dislocating the Minkowski Difference such that it no longer contains the origin. Penetration along a specific direction can be found by calculating the length of the vector that starts in the origin on the Minkowski Difference, has the same direction as $d$, and stops once it finds the edge of the Minkowski Difference. In other words, this is the norm of the intersection point between a ray starting at the origin with direction $d$ and the edge of the Minkowski Difference. Once this length is found, shape $B$ can move by that length along the direction of $d$ such that it is no longer in collision with shape $A$.
-\par The process of looking for the penetration along a direction $d$ starts with a polygon which contains the origin, constructed with points along the edge of the Difference. The first step is to find the only edge of this polygon with will intersect with the ray that starts in the orgin with direction $d$. Once this edge is found, the other edges of the polygon are ignored and an interative process starts. The first step on the iterative process is to calculate a vector which normal to the current intersecting segment and points "outwards" with respect to the origin. Next, the support function is performed with this vector. The resuting point will be closer to the desired final point. There are now three points in play: the two segment ends and the new point that resulted from the support operation. The next step is to define two segments, one from the one of the segment ends to the new support point, the other from the other segment end to the support point. The next step is to find which of these two new segments intersects with the same ray with direction $d$ and then repeat the iteration. 
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.8\textwidth]{Images/bernstein_1d.jpg}
+\caption{Direct Bernstein Solution}
+\label{fig:bernstein_1d}
+\end{figure}
 
 
-\section{Minimum Distance to Convex Shapes}
+\section{Remarks}
 
-\par Earlier, in section \ref{sec:bezcurvetopoint}, an algorithm to calculate the distance of a trajectory to a polygon was presented. This algorithm, however, is limited to polygons that do not intersect with the trajectory. If the curve intersects with the convex shape, the algorithm returns zero as minimum distance. Optimisation algorithms, like Sequential Quadratic Programming, require the derivative of the constraints to be non zero, even when the current guess for solution is not feasible because this derivate, in other words, will "inform" how far the control points must move so that the solution becomes feasible.
+\par Out of all of the presented parameterisation methods, the prefered is Bernstein Polynomails because they provide fast solutions and, as will be seen in later chapters, will work well for both prove advantageous for differentially and non differentially flat systems. And Accurate 
+\par 
 
-\par A modification to the algorithm that calculates the minimum distance to a convex shape is presented to calculate the intersection points between the curve and the shape. Aftwards, these intersection points are used to calculate a "penetration" of the curve in the shape.
-\par First thing to note is, during the recusion of the minimum distance algorithm, some endpoints of the cut segments will land inside the shape. If a segment has an endpoint inside and an endpoint outside the shape and the distance between these two points is approximately zero, then the point inside is added to a stack of intersecting points, otherwise, the recursion continues. If the control points of the recursive segments are partially in the shape while others are not, then the recursion continues, otherwise, if the control points are all outside or all inside the shape, then there is no point in continuing because the segment cannot contain anymore intersection points.
-% \par One thing that can be pointed out that can speed up checking if all of the control points of a segment are contained in the shape or not is by finding the convex hull of of the shape. If some control points are on the convex hull. The advantage of this way of testing if all control points are in the shape is that the complexity of the convex hull algorithm, will be $\mathcal{O}(n\log{}n)$, 
-\par Once the intersection points are found, the "penetration" must be calculated. This consists first in finding a convex hull that intersects the shapes. If the number of intersection points is two, then the deCasteljau algorithm is performed twice to find a set of control points for the segment that starts and ends with these two points and the convex hull of these control points is taken, otherwise, the convex hull of all of the intersecting points is used. Once the convex hull is determined, the \ac{DEPA} algorithm explained in section \ref{sec:epaalg}  is performed with the obstacle shape along a predifined direction $d$. The bigger the penetration depth, the more the trajectory is "deeper" in the curve.
