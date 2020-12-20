@@ -8,32 +8,58 @@
 % The following line allows to ref this chapter
 \label{chap:implementation}
 
-\par In this chapter, implementation of Direct methods based in the usage of Bernstein Polynomails are used in both Matlab and Python will be discussed. This chapter focuses on formalising the optimisation problem for multipe vehicles. Given that a Direct Method is used, once the optimisation problem is formalised, it can be solved by a whole range of non linear optimisation algorithms.
+\par In this chapter, implementation of a Direct Methods based on the usage of Bernstein Polynomails in both Matlab and Python will is discribed. This chapter focuses on formalising the optimisation problem for multipe vehicles. Once the optimisation problem is formalised, it can be solved by a whole range of non linear optimisation algorithms.
 
 \section{The Optimisation Problem}
+\label{sec:theoptproblem}
 
-\par The Motion Planning problem for multiple vehicles that will be focused for the project consists in a go-to formation manoeuvre \cite{sabetghadam2018cooperative}. The go-to formation manoeuvre consists of the simultaneous arrival of a formation of vehicles to desired locations whilst simultaneously avoiding collisions between each other and the environment.
+\par The Motion Planning problem for multiple vehicles that will be focused for the project consists in a go-to formation manoeuvre \cite{sabetghadam2018cooperative}. The go-to formation manoeuvre consists in the simultaneous arrival of a formation of vehicles to desired locations whilst simultaneously avoiding collisions between each other and the environment.
 
 \par Just as for the case of optimisation for a single vehicle, motion planning for multiple vehicles will also be based on the minimisation of an appropriate cost function. This time, however, the cost will be the result of the sum of the costs of each individual vehicle and an added constraint will be necessary that will take into account inter vehicle collisions. 
 
-\par The optimal control problem can be redefined for multiple vehicles as 
+\par The optimal control formulation for this motion planning problem is defined as
 \begin{equation}
     \label{eq:multi_cost}
     \begin{aligned}
-    & \underset{x^{[i]}(.),u^{[i]}(.),i= 1,\dots N_v}{\text{minimize}} && \int_0^T \sum_{i=1}^{N_v}  L_i (x^{[i]}(t),u^{[i]}(t))dt + \Psi (x(T)) \\
+    & \underset{x^{[i]}(.),u^{[i]}(.),i= 1,\dots N_v}{\text{minimize}} && \int_0^T \sum_{i=1}^{N_v}  L_i (x^{[i]}(t),u^{[i]}(t))dt + \Psi (x^{[i]}(T)) \\
     & \text{subject to}  && x^{[i]}(0) = x_0^{[i]}, \\
         & && x^{[i]}(T) = x_f^{[i]}, \\
-        & && \dot{x}^{[i]} = f_i (x^{[i]}(t), u^{[i]}(t)), &&& t \in [0,T]\\
-        & && c_{col} (x^{[i]},u^{[i]} ) \geq 0, \\
+        & && \dot{x}^{[i]} = f^{[i]} (x^{[i]}(t), u^{[i]}(t)), &&& t \in [0,T]\\
         & && h(x(t),u(t)) \geq 0, \\
-        & && \underline{x}^{[i]} \leq x^{[i]} (t) \leq \overline{x}^{[i]} , \\
-        & && \underline{u}^{[i]} \leq u^{[i]} (t) \leq \overline{u}^{[i]}
     \end{aligned}
 \end{equation}
-
-\par This problem will also produce a solution within time horizon $T$. Initial and terminal constraints will exist for every vehicle, as well as inter-vehicle constraints.
+where $i=1\dots N_v$ refers to a vehicle out of $N_v$ vehicles.
+\par This problem will also produce a solution within time horizon $t\in [0,T]$. Initial and terminal constraints will exist for every vehicle, as well as inter-vehicle constraints.
 
 \par A problem that only has the integral term $\sum_{v=1}^{N_v} L_v(x^{(v)}(t),u^{(v)}(t))$ is said to be in \textit{Lagrange form}, a problem that optimises only the boundary objective $\sum_{v=1}^{N_v} \Psi_v(x(T))$ is said to be in \textit{Mayer form} and a problem with both terms is said to be in \textit{Bolza form}. An example where only the \text{Mayer form} would be necessary could be a situation where the desired destination of the vehicles does not have enough room for them all to be arranged in their desired positions. Therefore, the goal of the optimiser is to find the closest to the desired positions.
+
+\par A direct method based on Bernstein Polynomails is used, therefor, some or all of the state variables/inputs are approximated by polynomials, each with the same order $N$.
+
+\par By using Bernstein approximation, all of the states and inputs for each vehicle combined will produce $N+1$ control points per number of state variables plus number of inputs per total number of vehicles. 
+\par Let $0=t_0<t_1<\dots<t_N=T$ be a set of equidistant \textit{time nodes}, i.e., $t_j= j\frac{t_N}{N}$, with $T>0$. By following the notation of Bernstein polynomials:
+\begin{equation}
+    \begin{gathered}
+        x^{[i]}(t) \approx x_N(t) = \sum_{j=0}^N \overline{x}_{j,N} b_{j,N}(t), \quad t\in[0,T] \\
+        u^{[i]}(t) \approx u_N(t) = \sum_{j=0}^N \overline{u}_{j,N} b_{j,N}(t), \quad t\in[0,T]
+    \end{gathered}
+\end{equation}
+with $x_N: [0,T]\rightarrow \mathbb{R}^{n_x}$ and $u_N:[0,T]\rightarrow \mathbb{R}^{n_u}$. In the equation above, $\overline{x}_{j,N}\in \mathbb{R}^{n_x}$ and $\overline{u}_{j,N}\in \mathbb{R}^{n_u}$ are Bernstien coefficients. Let $\overline{x}_N\in \mathbb{R}^{n_x\times (N+1)}$ and $\overline{u}_N\in \mathbb{R}^{n_u}\times(N+1)$ be defined as $\overline{x}_N = [\overline{x}_{0,N},\dots, \overline{x}_{N,N}]$, and $\overline{x}_N = [\overline{u}_{0,N},\dots, \overline{u}_{N,N}]$
+
+\par The optimisation problem now becomes 
+\begin{equation}
+    \label{eq:multi_cost_bern}
+    \begin{aligned}
+    & \underset{\overline{x}_N^{[i]},\overline{u}_N^{[i]},i= 1,\dots N_v}{\text{minimize}} && \int_0^T \sum_{i=1}^{N_v}  L^{[i]} (\overline{x}_N^{[i]},\overline{u}_N^{[i]})dt + \Psi (x_{N,N}) \\
+    & \text{subject to}  && \overline{x}^{[i]}_{0,N} = x_0^{[i]}, \\
+        & && \overline{x}^{[i]}_{N,N} = x_f^{[i]}, \\
+        & && \sum_{k=0}^{N} \boldsymbol{D}_{j,k} \overline{x}_{k,N}^{[i]} = f^{[i]} (\overline{x}_{j,N},\overline{u}_{j,N}), &&& \forall j=0,\dots,N\
+        & && h(x(t),u(t)) \geq 0, \\
+    \end{aligned}
+\end{equation}
+where $D_{j,k}$ is the $(j,k)$-th entry of the differentiation matrix $D_N = D_{N-1}E^N_{N-1}\in \mathbb{R}^{(N+1)\times(N+1)}$ that is obtained by combining the Bernstein Differentiation matrix \eqref{eq:bernderivmat} with the Bernstein degree elevation matrix whose indexes are given by \eqref{eq:bernsteinelevindexes}.
+\par What this new optimisation problem fundamentally means is that cost, and constraints delt by $h(.)$ can treat the control points as actual parameters for a polynomial function. On the other hand, the dynamics assume that the control points are good enough approximations for the polynomial functions themselves, which means that to force respecting dynamics means to force the dynamics to be respected on every time node respective to a control point.
+\par The optimisation problem \eqref{eq:multi_cost_bern} means that the cost can be obtained by applying the running and terminal costs to the control points.
+
 
 \section{The Log Barrier Function}
 
@@ -64,7 +90,7 @@ where $\beta_\delta(\cdot)$ is a function that is steep in infeasible solutions 
         \frac{k-1}{k}\left[\left(\frac{z-k\delta}{(k-1)\delta}\right)^k-1\right]-\log{}\delta & z\leq \delta
     \end{cases}
 \end{equation}
-which is continuous and whose derivative around $z=\delta$ is continuous too. For full reference see \cite{hauser2006barrie}.
+which is continuous and whose derivative around $z=\delta$ is continuous too. For full reference see \cite{hauser2006barrier}.
 \par The "hockey stick" function, with form
 \begin{equation}
     \delta(z)= \begin{cases}
@@ -75,6 +101,7 @@ which is continuous and whose derivative around $z=\delta$ is continuous too. Fo
 can be applied to the log barrier functional such that its derivative is smaller for feasible solutions. Figure \todo{plot the log barrier with and without the hockey function (hausler page 110)} shows the log barrier function with and without the hockey function applied.
 
 \section{Inter-Vehicular Constraints}
+\label{sec:mindistintveh}
 
 \par There are 2 ways of preventing inter-vehicle collision; \textit{spatial deconfliction} and \textit{temporal deconfliction} \cite{hausler2015mission}.
 Spatial deconfliction is appropriate for \ac{PF} and imposes the constraint that the spatial paths of the vehicles under consideration will never intersect and keep a desired safe distance from each other. Temporal deconfliction is appropriate for \ac{TT} and requires that two vehicles will never be ”at the same place at the same time”. However, their spatial paths are allowed to intersect. Figure \ref{fig:deconfliction} illustrates the two types of deconfliction strategies. Temporal deconfliction allows an extra degree of freedom and will intuitively lead to cheaper dynamic costs.
@@ -137,6 +164,7 @@ If the Minkowski Difference contains the origin, then the two shapes have common
 
 
 \section{Minimum Distance to Convex Shapes}
+\label{sev:mindistconvshapes}
 
 \par Earlier, in section \ref{sec:bezcurvetopoint}, an algorithm to calculate the distance of a trajectory to a polygon was presented. This algorithm, however, is limited to polygons that do not intersect with the trajectory. If the curve intersects with the convex shape, the algorithm returns zero as minimum distance. Optimisation algorithms, like Sequential Quadratic Programming, require the derivative of the constraints to be non zero, even when the current guess for solution is not feasible because this derivate, in other words, will "inform" how far the control points must move so that the solution becomes feasible.
 
@@ -160,8 +188,9 @@ A slight modification for the \ac{EPA} algorithm is proposed here. It will be re
 
 
 \section{Description of the implemented code}
+\label{sec:description_implementation}
 
-\par The variables for the motion planning problem are each vehicle's state variables and inputs, as explained in chapter \label{chap:autonomousvehiclemodels}. Each of these variables will be refered to as curves. Optimisation algorithms cannot take continuous functions as variables, therefor, some form of parameterisation of each curve is necessary, as exemplified in some of the algorithms of chapter \label{chap:theory}. Here, each curve will be represetend as a Bernstein Polynomial with order $N$, which will require $N+1$ control points. A destinction is made between state variables and inputs: state variables must have establised initial and final conditions, inputs do not. This implies that for state variables, the initial and final control points must be fixed, therefor, they do not need to participate on the optimisation problem. The following matrix represents how the control points are stored so that they can be accessed by all functions that perfom operations on the curves
+\par The variables for the motion planning problem are each vehicle's state variables and inputs, as explained in section \label{sec:theoptproblem}. Each of these variables will be refered to as curves. Optimisation algorithms cannot take continuous functions as variables, therefor, some form of parameterisation of each curve is necessary, as exemplified in some of the algorithms of chapter \label{chap:theory}. Here, each curve will be represetend as a Bernstein Polynomial with order $N$, which will require $N+1$ control points. A destinction is made between state variables and inputs: state variables must have establised initial and final conditions, inputs do not. This implies that for state variables, the initial and final control points must be fixed, therefor, they do not need to participate on the optimisation problem. The following matrix represents how the control points are stored so that they can be accessed by all functions that perfom operations on the curves
 
 \begin{equation}
     \begin{bmatrix}
@@ -235,7 +264,7 @@ The running cost function will be based on minimisation of the energy:
 
 \subsection{dynamics}
 
-the dynamics in matlab is 
+the dynamics in matlab is given by 
 
 \begin{lstlisting}[language=matlabfloz,caption={\mcode{Matlab Function}}]
 ceq = [
@@ -253,12 +282,9 @@ ceq = [
     \item the equailty is maintained in the control points, not the values of the curve itself so some error is expected
 \end{itemize}
 diff ma
-\todo{explain the ordinary differential equaitons}
 
 \section{Check Soundness with IVP Solution}
+\label{sec:ivproblem}
 
-\par One the optimisation process gets completed, the trajectory is defined along with, depending on the used model, the full function for the inputs which can then be replugged into the \ac{ODE} and check what resulting trajectory is obtained. If the approximation is good enough, the resulting trajectory should be nearly identical to the the function for the trajectory.
-
-\todo{calculation of the limits of acceleration of the medusa model}
-
+\par Once the optimisation process gets completed, the trajectory is defined along with, depending on the used model, the control points for the inputs which can then be replugged into the \ac{ODE} and check what resulting trajectory is obtained, this process is known as solving an \ac{IVP}. If the approximation is good enough, the resulting trajectory should be nearly identical to the the function for the trajectory. 
 

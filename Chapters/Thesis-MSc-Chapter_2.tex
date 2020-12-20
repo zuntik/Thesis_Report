@@ -4,7 +4,7 @@
 \label{chap:theory}
 %\todo[color=green!40, author=Thomas, fancyline]{choose best title for chapter}{}
  
-\par In this chapter, methods for trajectory optimisation will be reviewed. These methods are generic, i.e., they can be applied to a wide range of dynamic systems. In this study, they will be applied to the control of a simple model for a vehicle in both one dimension. A good understanding of motion planning for single vehicles will be necessary before extending to multiple vehicles.
+\par In this chapter, direct methods for trajectory optimisation will be reviewed. These methods are generic, i.e., they can be applied to a wide range of dynamic systems. In this study, they will be applied to the control of a simple model for a vehicle in both one dimension. A good understanding of motion planning for single vehicles will be necessary before extending to multiple vehicles.
 
 \section{The Optimisation Probelm}
 
@@ -21,7 +21,7 @@
     \label{eq:general_cost}
 \end{equation}
 
-where $x_0$ is the initial state of the vehicle, the differential equation describes the model for the motion of the vehicle, $h(x(t)$, $u(t))$ represents the path constraints, and $r(x(T))=0$ is the terminal constraint. $T$ is known as the time ”horizon”, i. e., no matter what motion planning is used, the produced control law will only be valid within time $t\in[0;\infty]$.
+where $x(t)$ and $u(t)$ is defined as $x:[0,T]\rightarrow \mathbb{R}^{n_x}$, $u:[0,T]\rightarrow \mathbb{R}^{n_u}$, $f(x,t)$ is defined as $f:\mathbb{R}^{n_x}\times \mathbb{R}^{n_u}\rightarrow \mathbb{R}^{n_x}$, $x_0$ is the initial state of the vehicle, the differential equation describes the model for the motion of the vehicle, $h(x(t)$, $u(t))$ represents the path constraints, and $r(x(T))=0$ is the terminal constraint. $T$ is known as the time ”horizon”, i. e., no matter what motion planning is used, the produced control law will only be valid within time $t\in[0;\infty]$.
 
 
 \par An example of a path constraint is to keep the minimum distance to a known obstacle bounded below by a desired safety distance. If state variables 1 and 2 of $x$ represent the position in a 2 dimensional plane, then $h(x)$ could be
@@ -90,7 +90,10 @@ in matrix form.
 where $x_1$ and $x_2$ are variables of state $x$, $u$ is the input fed to the system, and $\rho$ is a scalar that penalizes "energy" consumption.
 \par This dynamic system is deferentially flat with $x_1$ as the flat output, because it is possible to express $x_2$ as a derivative of $x_1$ and $u$ as a double derivative of $x_1$.
 
-\par Although simpler and for demonstation purpose, uni dimensional problems still have a place in real life applications. One easy example is a train what follows a track. It cannot leave the track therefor, environmental constraints (obstacles) cannot be persistent if they are between it's initial and desired position. A non-persistent constraint could be another train that is joining the same line, therefor, the first train cannot be in certain positions in certain points in time. \todo{worth mentioning this?}
+\par Although simpler and for demonstation purpose, uni dimensional problems still have a place in real life applications. One easy example is a train what follows a track. It cannot leave the track therefor, environmental constraints (obstacles) cannot be persistent if they are between it's initial and desired position. A non-persistent constraint could be another train that is joining the same line, therefor, the first train cannot be in certain positions in certain points in time.
+
+\par The optimisation problem of equation \eqref{eq:general_cost}, is infinite dimensional because the solution will be a set functions of time. Being functions over time, the solutions have an infinite number of points. The following direct methods will replace the infinite number of points of the function by approximated functions which are parameterised by a finite number of variables.
+\par Before the direct methods, the Linear Quadratic Regulator is presented, which is not a direct method, it is a feedback law which guarantees minimal cost for certain kinds of cost functionals. Being optimal, the solutions provided by this method will serve as baselines to compare to the direct methods.
 
 \section{differentially Flat Systems}
 
@@ -479,7 +482,7 @@ where $n$ is the order of the polynomial and $\tau$ is the time contraction of $
 \end{figure}
 
 
-\par Two Bernstein Polynomials of the same order, i.e., same number of control points, can be plotted against eachother within the time domain $\tau \in [0,1]$. The control points of the curvs together form $n+1$ points in 2 dimensions. These are plotted together with the example 2-D plot of \ref{fig:generic_bezier2D}. Once again, like in the 1-D case, the control points "shape" the curve by attracting the curve to themselves.
+\par Two Bernstein Polynomials of the same order, i.e., same number of control points, can be plotted against eachother within the time domain $\tau \in [0,1]$. The control points of the curves together form $n+1$ points in 2 dimensions. These are plotted together with the example 2-D plot of \ref{fig:generic_bezier2D}. Once again, like in the 1-D case, the control points "shape" the curve by attracting the curve to themselves.
 \par One thing that is important to note is how the control points'  will play a role on the shape of the curve. Figure \ref{fig:generic_bezier2D_reordered} shows how the same control points can form a completely different curve.
 
 \par Figure~\ref{fig:generic_bezier2D} shows a two dimensional Bernstein polynomial.
@@ -522,13 +525,14 @@ and the derivative and integral are given by
 
 \par The control points for the derivative of a bernstein polynomial can be obtained my a mutiplication of a derivation matrix by the control points of the original curve stored in the column vector, with the matrix given by 
 \begin{equation}
-    \text{Derivation Matrix} = 
+    \boldsymbol{D}_{N-1} = 
     \begin{bmatrix}
-        1 & -1 & & \ldots & & \\
-        & 1 & -1 & \ldots & & \\
-        \vdots &  \vdots & \vdots & \vdots & \vdots & \vdots  \\
-        & & \ldots & & -1 & 1
-    \end{bmatrix}
+        -\frac{N}{T} & \frac{N}{T} & 0 & \ldots & & 0 \\
+        0 & -\frac{N}{T} & \frac{N}{T} & \ldots & & 0 \\
+        \vdots &  \ddots & \ddots & \ddots & &   \\
+        0 & & \ldots & & -\frac{N}{T} & \frac{N}{T}
+    \end{bmatrix} \in \mathbb{R}^{(N+1)\times N}
+    \label{eq:bernderivmat}
 \end{equation}
 
 \par The control points of the Anti-Derivative/Primitivation can be obtained similarly to the derivation by multiplying the control points to a primitivation matrix (my discovery) and adding a vector:
@@ -538,16 +542,25 @@ and the derivative and integral are given by
 
 where $p_0$ is the initial values of $P$ and the matrix A is given by 
 \begin{equation}
-    \begin{bmatrix}
+    \boldsymbol{A}_{N+1} = \begin{bmatrix}
         0 & 0 & \ldots & 0 & 0 \\
-        1 & 0 & \ldots & 0 & 0 \\
-        1 & 1 & \ldots & 0 & 0 \\
-        \vdots & \vdots & \ldots & \vdots & \vdots \\
-        1 & 1 & \ldots & 1 & 1 \\
+        \frac{T}{N+1} & 0 & \ldots & 0 & 0 \\
+        \frac{T}{N+1} & \frac{T}{N+1} & \ldots & 0 & 0 \\
+        \vdots & \ddots & \ddots & \ddots & \\
+        \frac{T}{N+1} & \frac{T}{N+1} & \ldots & \frac{T}{N+1} & \frac{T}{N+1} \\
     \end{bmatrix}
 \end{equation}
 
+\par A Bernstein polynomial of degree $N$ and coefficients $p_{k,N}\in \mathbb{R}, k = 0,\dots,N$ can be expressed as a Bernstein polynomial of degree $M$ with $M>N$, with coefficients $p_{k,M} \in \mathbb{R}, k = 0,\dots,M$ given by 
+\begin{equation}
+    p_{k,M} = \sum_{j=\text{max}(0,k+M-N)}^{\text{min}(N,k)} \frac{{M-N \choose k-j}{N\choose j}}{{M\choose k}} p_{j,N} \in \mathbb{R}^n
+\end{equation}
 
+\par The control points for the degree elevation can also be obtained by multiplying the control points vector by a matrix $\boldsymbol{E}$ whose indexes are given by 
+\begin{equation}
+    \label{eq:bernsteinelevindexes}
+    \boldsymbol{E}_{ij} = \frac{{N\choose j}{M-N\choose i-j}}{{M\choose i}}
+\end{equation}
 
 
 %\par The cost function, which will be the same as previous the previous examples, (\ref{eq:my_cost}). In order to calculate it and take, equations \ref{eq:bern_mul} and \ref{eq:bern_sum} will be necessesary for summation and addition of Bernstein polynomials, respectfully.
