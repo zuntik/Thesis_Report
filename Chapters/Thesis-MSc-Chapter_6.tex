@@ -7,14 +7,11 @@
 \cleardoublepage%
 \label{chap:conclusion}
 
-
-\par With this initial study, problems associated with cooperative motion planning was studied with the objective of developing and testing selected algorithms on a number of prototype vehicles that are property of ISR-Técnico. A suite of programs has been developed that perform calculations on Bezier Curves which will prove useful for the later stages of the project. Also, an introduction with Matlab's optimisation tools has allowed an important understanding of their limitations and benefits. Basic concepts like trajectories, paths and linear and non-linear constraints for optimisation problems have been researched.
-\par  This initial study has provided me with a clear understanding of how to carry out a research project. This includes how to define a scientific problem, investigating its importance and relevance within the wider scientific area, how to investigate the state of the art and how to develop the research over a limited time-scale.
-
-\todo[color=green!40, author=Thomas, fancyline]{fazer conclusao}{} This project was cool.
 % #############################################################################
-\section{Conclusions}
 
-% #############################################################################
-\section{System Limitations and Future Work}
-Aliquam aliquet, est a ullamcorper condimentum, tellus nulla fringilla elit, a iaculis nulla turpis sed wisi. Fusce volutpat. Etiam sodales ante id nunc. Proin ornare dignissim lacus. Nunc porttitor nunc a sem. Sed sollicitudin velit eu magna. Aliquam erat volutpat. Vivamus ornare est non wisi. Proin vel quam. Vivamus egestas. Nunc tempor diam vehicula mauris. Nullam sapien eros, facilisis vel, eleifend non, auctor dapibus, pede.
+\par In this work, a fast optimal motion planning algorithm was designed. It consisted in solving an optimal control problem, by finding its equivalent optimisation problem. The algorithm's final form was chosen based on the comparison of several parameterisation methods and how well each one can handle dynamic and environmental constraints. Bezier curves was the final choice of parameterisation to approximate the optimal trajectory. They have very good properties for motion planning that greatly simplify the optimisation problem.
+
+Two \ac{AUV} models, the unicycle and the Medusa, were studied and afterwards, how can their characteristics reap the benefits from the proposed motion planning algorithm. Specifically, it is shown that the use of a Bernstein based polynomial representation of trajectories is no longer limited for differentially flat systems and how, in fact, defining all of the state variables and inputs and linking them via the dynamics simplifies the computation of running costs and calculating feasibility of the solution.
+\par Results also show, however, that time complexity quickly increases with a high number of vehicles, specially when a high order of approximation is used for every vehicle's state and input variables. These time complexity limitations could potentially be negligible if a more advanced computational power is available.
+\par This algorithm, not only solves the problem for the go-to-formation maneuver, to start cooperative missions, but also allows to add other objectives such active navigation localization. The tools developed to plan optimal trajectories can now be explored to conduct further research. 
+

@@ -8,10 +8,10 @@
 % The following line allows to ref this chapter
 \label{chap:autonomousvehiclemodels}
 
-\par In this chapter equations that rule the motion of an autonomous marine vehicle are derived. But first, the coordinate frames will be defined (\ref{sec:refframes}). Then the general vehicle motion equations for the dubin's car (\ref{sec:dubincarequations}). Finally, the motion equations for the MEDUSA model are presented (the characterization of the vehicle MEDUSA (\ref{sec:medusamodelequations}). 
+\par In this chapter equations that rule the motion of an autonomous marine vehicle are derived. But first, the coordinate frames will be defined (\ref{sec:refframes}). Then the general vehicle motion equations for the Dubin's car (\ref{sec:dubincarequations}). Finally, the motion equations for the MEDUSA model are presented (the characterization of the vehicle MEDUSA (\ref{sec:medusamodelequations}). 
 \par This chapter will focus primarily on dynamics in a two dimensional space.
 
-\section{Reference Frames and Notaion}
+\section{Reference Frames and Notation}
 \label{sec:refframes}
 
 
@@ -20,12 +20,12 @@
 \begin{itemize}
     \item $x_B$ is the longitudinal axis (directed from the stern to fore)
     \item $y_B$ is the transversal axis (directed from to starboard)
-    \item $z_B$ is the normal axix (directed from top to bottom)
+    \item $z_B$ is the normal axis (directed from top to bottom)
 \end{itemize}
 
-\par To simplify the model equations, the origin of the body-fixed frame is normally chosen to coincide with the centre of mass of the vehicle. The motion control of $\{B\}$ (that corresponds to the motion of the vehicle) is described relative to the intertial frame $\{U\}$.
+\par To simplify the model equations, the origin of the body-fixed frame is normally chosen to coincide with the centre of mass of the vehicle. The motion control of $\{B\}$ (that corresponds to the motion of the vehicle) is described relative to the inertial frame $\{U\}$.
 
-\par In general, six independent coordinate are necessary to determine the evolution of the position and orientation (six \ac{DOF}), three position coordinates $(x,y,z)$ and using the Euler orientation angles $(\phi, \theta, \psi)$. The six motion components are difined as \textit{surge}, \textit{sway}, \textit{heave}, \textit{roll}, \textit{pitch}, and \textit{yaw}, and adopting the SNAME \footnote{The Society of Naval Architects \& Marine Engineers - http://www.sname.org/} notation it can be written as in the Table \ref{tab:coordinate_notation} or in a vectorial form: 
+\par In general, six independent coordinate are necessary to determine the evolution of the position and orientation (six \ac{DOF}), three position coordinates $(x,y,z)$ and using the Euler orientation angles $(\phi, \theta, \psi)$. The six motion components are defined as \textit{surge}, \textit{sway}, \textit{heave}, \textit{roll}, \textit{pitch}, and \textit{yaw}, and adopting the SNAME \footnote{The Society of Naval Architects \& Marine Engineers - http://www.sname.org/} notation it can be written as in the Table \ref{tab:coordinate_notation} or in a vectorial form: 
 \begin{itemize}
     \item $\eta_1 = [x,y,z]^T$ - position of the origin of $\{B\}$ with respect to $\{U\}$
     \item $\eta_2 = [\phi, \theta, \psi]^T$ - orientation of $\{B\}$ with respect to $\{U\}$.
@@ -73,7 +73,7 @@ In compact form yields
 \section{Medusa}
 \label{sec:medusamodelequations}
 
-\par The kinematics envolves only the gemotrical aspects of motion, and relates the velocities with poisiton. Using the coordinate frames notation in Section \ref{sec:refframes}, the kinematic equation can be expressed as
+\par The kinematics involves only the geometrical aspects of motion, and relates the velocities with position. Using the coordinate frames notation in Section \ref{sec:refframes}, the kinematic equation can be expressed as
 \begin{equation}
     \dot{\eta} = J(\eta)\nu
 \end{equation}
@@ -160,7 +160,7 @@ where $M = M_{RB} + M_a$, $C(\nu) = C_{RB}(\nu) + C_A(\nu)$.
 
 \subsection{Simplified Equations of Motion}
 
-\par This thesis will focus on movement along a 2-D plane, therefor, the dynamics and kinematics can be simplified such that there are only three degrees of freedom $[x,y,\psi]$.
+\par This thesis will focus on movement along a 2-D plane, therefore, the dynamics and kinematics can be simplified such that there are only three degrees of freedom $[x,y,\psi]$.
 \par The kinematics with take the simpler form 
 
 \begin{equation}
@@ -187,7 +187,7 @@ where $F_{sb}$ and $F_{ps}$ are the starboard and port-side thruster forces, res
         m_v \dot{v} + m_u u r + d_v v = 0, \\
         m_r \dot{r} - m_{ub} u v + d_r r = \tau_r,
     \end{gathered}
-    \label{eq:simple_medusa_dyamics}
+    \label{eq:simple_medusa_dynamics}
 \end{equation}
 where
 \begin{equation}
@@ -201,8 +201,8 @@ where
 \end{equation}
 
 
-\par All the previous equations were expressed without considering the influence of external factors like ocean currents. If a constrant irrotational ocean current, $v_c$, is introduces, forming an angle $v = v_r+v_c$, where $u_r$ and $v_r$ are the components of the \acs{AUV} velocity with respect to the current and $u_c$ and $v_c$ are the components of the ocean current velocity in the body frame.
-The previous dynamic equations \eqref{eq:simple_medusa_dyamics} become
+\par All the previous equations were expressed without considering the influence of external factors like ocean currents. If a constant irrotational ocean current, $v_c$, is introduced, forming an angle $v = v_r+v_c$, where $u_r$ and $v_r$ are the components of the \acs{AUV} velocity with respect to the current and $u_c$ and $v_c$ are the components of the ocean current velocity in the body frame.
+The previous dynamic equations \eqref{eq:simple_medusa_dynamics} become
 \begin{equation}
     \begin{gathered}
         m_u\dot{u}-m_v(v_r+v_c)r+d_u u=\tau_u, \\
@@ -217,7 +217,7 @@ where the expressions for masses and drags remain the same as in \eqref{eq:medus
 
 \par Actually, the medusa model is differentially flat if $x$, $y$ and $\psi$ are to be considered the flat outputs.
 
-The Remaining variables can be obtained by rearanging the kinematics:
+The remaining variables can be obtained by rearranging the kinematics:
 \begin{equation}
 \begin{split}
     & \begin{bmatrix}
@@ -273,10 +273,10 @@ because this equation is what guarantees $\tau_v = 0$. If $\tau_v \neq 0$, the v
 \section{Dubin Car}
 \label{sec:dubincarequations}
 
-\par The Medusa model can be even furhter simplified by a Dubin's Car.
-\par In geometry, the term Dubins path typically refers to the shortest curve that connects two points in the two-dimensional Euclidean plane (i.e. x-y plane) with a constraint on the curvature of the path and with prescribed initial and terminal tangents to the path, and an assumption that the vehicle traveling the path can only travel forward \cite{wiki:dubincar}. 
-\par A dubin's car is a simple model for a vehicle that transveses a dubin's path.
-\par The main difference to the Medusa Model is that this will does not possess the possibility of side slip, therefor, less variables and dynamics equations will be necessary which will translate to a smaller computation time.
+\par The Medusa model can be even further simplified by a Dubin's Car.
+\par In geometry, the term Dubin's path typically refers to the shortest curve that connects two points in the two-dimensional Euclidean plane (i.e. x-y plane) with a constraint on the curvature of the path and with prescribed initial and terminal tangents to the path, and an assumption that the vehicle travelling the path can only travel forward \cite{wiki:dubincar}. 
+\par A Dubin's car is a simple model for a vehicle that transverses a Dubin's path.
+\par The main difference to the Medusa Model is that this will does not possess the possibility of side slip, therefore, less variables and dynamics equations will be necessary which will translate to a smaller computation time.
 
 \par A simple kinematic car model for the systems is: 
 \begin{equation}
