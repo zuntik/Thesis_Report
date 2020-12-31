@@ -8,12 +8,11 @@
 % The following line allows to ref this chapter
 \label{chap:autonomousvehiclemodels}
 
-\par In this chapter equations that rule the motion of an autonomous marine vehicle are derived. But first, the coordinate frames will be defined (\ref{sec:refframes}). Then the general vehicle motion equations for the Dubin's car (\ref{sec:dubincarequations}). Finally, the motion equations for the MEDUSA model are presented (the characterization of the vehicle MEDUSA (\ref{sec:medusamodelequations}). 
+\par In this chapter equations that rule the motion of an autonomous marine vehicle are derived. But first, the coordinate frames will be defined (\ref{sec:refframes}). Afterwards, the motion equations for the MEDUSA model are presented (\ref{sec:medusamodelequations}). Finally, the simpler Dubin's car model is presented(\ref{sec:dubincarequations}).
 \par This chapter will focus primarily on dynamics in a two dimensional space.
 
 \section{Reference Frames and Notation}
 \label{sec:refframes}
-
 
 \par To derive the equations of motion for a marine vehicle it is standard practice to define two coordinate frames; Earth-fixed inertial frame $\{U\}$ composed by the orthonormal axes $\{x_U,y_U,z_U\}$ and the body-fixed frame $\{B\}$ composed by the axes $\{x_B,y_B,z_B\}$, as indicated in Figure \ref{fig:coordinate}.
 
@@ -117,7 +116,7 @@ Since the hydrodynamic forces and moments have simpler expressions if written in
     \label{eq:rigid_body}
 \end{equation}
 
-where $M_{RB}$s the rigid body inertia matrix, $C_{RB}$ represents the Coriolis and centrifugal terms and $\tau_{RB}$ is a generalized vector of external forces and moments and can be decomposed as
+where $M_{RB}$ is the rigid body inertia matrix, $C_{RB}$ represents the Coriolis and centrifugal terms and $\tau_{RB}$ is a generalized vector of external forces and moments and can be decomposed as
  
 \begin{equation}
     \tau_{RB} = \tau + \tau_A + \tau_D + \tau_R + \tau_{dist}
@@ -185,7 +184,7 @@ where $F_{sb}$ and $F_{ps}$ are the starboard and port-side thruster forces, res
     \begin{gathered}
         m_u\dot{u} - m_v v r + d_u u = \tau_u, \\
         m_v \dot{v} + m_u u r + d_v v = 0, \\
-        m_r \dot{r} - m_{ub} u v + d_r r = \tau_r,
+        m_r \dot{r} - m_{uv} u v + d_r r = \tau_r,
     \end{gathered}
     \label{eq:simple_medusa_dynamics}
 \end{equation}
@@ -201,7 +200,7 @@ where
 \end{equation}
 
 
-\par All the previous equations were expressed without considering the influence of external factors like ocean currents. If a constant irrotational ocean current, $v_c$, is introduced, forming an angle $v = v_r+v_c$, where $u_r$ and $v_r$ are the components of the \acs{AUV} velocity with respect to the current and $u_c$ and $v_c$ are the components of the ocean current velocity in the body frame.
+\par All the previous equations were expressed without considering the influence of external factors like ocean currents. If a constant irrotational ocean current, $v_c$, is introduced, forming an angle $v = v_r+v_c$, where $u_r$ and $v_r$ are the components of the \acs{AMV} velocity with respect to the current and $u_c$ and $v_c$ are the components of the ocean current velocity in the body frame.
 The previous dynamic equations \eqref{eq:simple_medusa_dynamics} become
 \begin{equation}
     \begin{gathered}
@@ -212,12 +211,9 @@ The previous dynamic equations \eqref{eq:simple_medusa_dynamics} become
 \end{equation}
 where the expressions for masses and drags remain the same as in \eqref{eq:medusa_masses_and_drags}.
 
+\subsection{Somewhat Differentially Flat Property}
 
-\subsection{\textit{Differentially flatify}}
-
-\par Actually, the medusa model is differentially flat if $x$, $y$ and $\psi$ are to be considered the flat outputs.
-
-The remaining variables can be obtained by rearranging the kinematics:
+\par If the states $x$, $y$ and $\psi$ are interpreted as flat outputs, then the Medusa model can be interpreted as differentially flat. All other variables can be obtained with rearranging the kinematics and dynamics:
 \begin{equation}
 \begin{split}
     & \begin{bmatrix}
@@ -266,15 +262,14 @@ and the  inputs from the dynamics:
     m_v \dot{v} + m_u u r + d_v v = 0
     \label{eq:onlymandatoryconstraint}
 \end{equation}
-because this equation is what guarantees $\tau_v = 0$. If $\tau_v \neq 0$, the vehicle will have to be fully actuated for the vehicle to follow it.
+because this equation is what guarantees $\tau_v = 0$. 
 
 
-
-\section{Dubin Car}
+\section{Dubin's Car}
 \label{sec:dubincarequations}
 
 \par The Medusa model can be even further simplified by a Dubin's Car.
-\par In geometry, the term Dubin's path typically refers to the shortest curve that connects two points in the two-dimensional Euclidean plane (i.e. x-y plane) with a constraint on the curvature of the path and with prescribed initial and terminal tangents to the path, and an assumption that the vehicle travelling the path can only travel forward \cite{wiki:dubincar}. 
+\par In geometry, the term Dubin's path typically refers to the shortest curve that connects two points in the two-dimensional Euclidean plane (i.e. x-y plane) with a constraint on the curvature of the path and with prescribed initial and terminal tangents to the path, and an assumption that the vehicle travelling the path can only travel forward \cite{Reeds1990OPTIMALPF}. 
 \par A Dubin's car is a simple model for a vehicle that transverses a Dubin's path.
 \par The main difference to the Medusa Model is that this will does not possess the possibility of side slip, therefore, less variables and dynamics equations will be necessary which will translate to a smaller computation time.
 
@@ -287,14 +282,6 @@ because this equation is what guarantees $\tau_v = 0$. If $\tau_v \neq 0$, the v
     \end{gathered}
 \end{equation}
 where $(x,y)$ is the car's position, $\psi$ is the car's heading, $u$ is the car's speed, and $\omega$ is the car's turn rate.
-
-\par The dynamics will be the simplest possible: basic accelerations.
-\begin{equation}
-    \begin{gathered}
-        \dot{\omega} = r \\
-        \dot{u} = a
-    \end{gathered}
-\end{equation}
 
 \par This model is differentially flat because for any continuous $x$ and $y$, all of the other variables can be derived.
 \par The tangent and rotational speeds can be obtained by

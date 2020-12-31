@@ -11,29 +11,19 @@
 
 \par Motion planning for a single vehicle can be cast in the form of an optimal control problem of the form (see \cite{diehl2006fast})
 
-%\begin{equation}
-%    \begin{aligned}
-%    & \underset{x(.),u(.)}{\text{minimise}} && J = \int_0^T L(x(t),u(t))dt + \Psi (x(T)) \ dt\\
-%    & \text{subject to}  && x(0) = x_0, &&& &&&& \text{(fixed initial value)} \\
-%        & && \dot{x} = f(x(t), u(t)), &&& t \in [0,T] &&&& \text{(ODE Model)}\\
-%        & && h(x(t),u(t)) \geq 0, &&&  t \in [0,T] &&&& \text{(path constraints)} &&&&&\\
-%        & && r(x(T)) = 0 &&& &&&& \text{(terminal constraints)} &&&&&
-%    \end{aligned}
-%    \label{eq:general_cost}
-%\end{equation}
 \begin{equation}
     \begin{aligned}
     & \underset{x(.),u(.)}{\text{minimise}} && J = \int_0^T L(x(t),u(t))dt + \Psi (x(T)) \ dt\\
     & \text{subject to}  && x(0) = x_0, \\
-        & && \dot{x} = f(x(t), u(t)), &&& t \in [0,T] \\
-        & && h(x(t),u(t)) \geq 0, &&&  t \in [0,T] \\
-        & && r(x(T)) = 0 
+        & && \dot{x} = f(x(t), u(t)), &&& t \in [0,T] \\ % &&&& \text{(fixed initial value)} \\
+        & && h(x(t),u(t)) \geq 0, &&&  t \in [0,T] \\ % &&&& \text{(ODE Model)}\\
+        & && r(x(T)) = 0 % &&&& \text{(terminal constraints)} &&&&&
     \end{aligned}
     \label{eq:general_cost}
 \end{equation}
-where $x(t)$ are the states, defined as $x:[0,T]\rightarrow \mathbb{R}^{n_x}$, $u(t)$ are the inputs, defined as $u:[0,T]\rightarrow \mathbb{R}^{n_u}$, $f(x,t)$ is the system of equations for the dynamics, defined as $f:\mathbb{R}^{n_x}\times \mathbb{R}^{n_u}\rightarrow \mathbb{R}^{n_x}$, $x_0$ is the initial state, $h(x(t)$, $u(t))$ represents the path constraints, $r(x(T))=0$ the terminal constraints, $L(x(t),u(t))$ is the running cost, defined as $L:\mathbb{R}^{n_x}\times \mathbb{R}^{n_u}\rightarrow \mathbb{R}$, $\Psi(x(t))$ is the terminal cost defined as $\Psi:\mathbb{R}^{n_x} \rightarrow \mathbb{R}$ and finally $T$ is known as the time ”horizon”, i. e., no matter what motion planning algorithm is used, the produced control law will only be valid within time $t\in[0;T]$.
+where $x(t)$ is defined as $x:[0,T]\rightarrow \mathbb{R}^{n_x}$, $u(t)$ is defined as $u:[0,T]\rightarrow \mathbb{R}^{n_u}$, $f(x,t)$ is the system of equations for the dynamics, defined as $f:\mathbb{R}^{n_x}\times \mathbb{R}^{n_u}\rightarrow \mathbb{R}^{n_x}$, $x_0$ is the initial state, $h(x(t)$, $u(t))$ represents the path constraints, $r(x(T))=0$ the terminal constraints, $L(x(t),u(t))$ is the running cost, defined as $L:\mathbb{R}^{n_x}\times \mathbb{R}^{n_u}\rightarrow \mathbb{R}$, $\Psi(x(t))$ is the terminal cost defined as $\Psi:\mathbb{R}^{n_x} \rightarrow \mathbb{R}$ and finally $T$ is known as the time ”horizon”, i. e., no matter what motion planning algorithm is used, the produced control law will only be valid within time $t\in[0;T]$.
 
-\par An example of a path constraint is to keep the minimum distance to a known obstacle bounded below by a desired safety distance. If state variables 1 and 2 of $x$ represent the position in a 2 dimensional plane, then $h(x)$ could be
+\par An example of a path constraint is to keep the minimum distance to a known obstacle bounded below by a desired safety distance. If $x$ encodes the position then $h(x)$ could be
 \begin{equation}
     \label{eq:example_constr}
     h(x(t)) = \underset{t\in[0,T]}{\text{min}}\lVert x - p_0 \rVert - d_{\text{min}}
@@ -88,10 +78,11 @@ in matrix form, which means matrices $A$ and $B$ of equation \ref{eq:general_sta
 where $\rho$ is a scalar that penalizes "energy" consumption.
 \par This dynamic system is diferentially flat (see section \ref{sec:differentiallyflatsystems}) with $x_1$ as the flat output, because it is possible to express $x_2$ as a derivative of $x_1$ and $u$ as a double derivative of $x_1$.
 \par Although this 1-D model is very simple, it can provide insight into real life applications. One easy example is a train what follows a track. It cannot leave the track and so, environmental constraints, such as obstacles, cannot be fixed in time if they are between the train's initial and target position. A non-fixed constraint could be another train that is joining the same track, therefore, the first train cannot be at certain points at certain times.
-\par The optimisation problem \eqref{eq:general_cost}, is infinite dimensional because the solution will be a set of functions of time. Functions over time have an infinite number of points. The following direct methods will replace the infinite number of points of the function by approximated functions which are parameterised by a finite number of variables.
-\par Before presenting the direct methods, results of the application of the \acl{LQR} are presented. This is important as the results serve as baselines to compare with the direct methods. The \ac{LQR} is a feedback law which guarantees minimal cost for certain kinds of cost functionals.which is not a direct method, it is a feedback law which guarantees minimal cost for certain kinds of cost functionals.
+\par The optimisation problem \eqref{eq:general_cost}, is infinite dimensional because the solution will be a function of time, which has an infinite number of points. The following direct methods will replace the infinite number of points of the function by approximated functions which are parameterised by a finite number of variables.
+\par Before presenting the direct methods, results of the application of the \acl{LQR} are presented. This is important as the results serve as baselines to compare with the direct methods. The \ac{LQR} is a feedback law which guarantees minimal cost for certain kinds of cost functionals.
 
 \section{Linear Quadratic Regulator}
+\label{sec:linearquadraticregulator}
 
 \par A \acl{LQR} is a technique applicable to linear dynamic systems of the form
 \begin{equation}
@@ -134,11 +125,9 @@ with appropriate boundary conditions.
 \par The solution provided by this algorithm will be optimal and unique if the following conditions are fulfilled:
 \begin{itemize}
     \item $(A,B)$ is controllable;
-    \item for a system output $y = C x$, the pair $(A,C)$ is observable;
+    \item for a system output $y = C x$, with $Q=C^T C$, the pair $(A,C)$ is observable;
     \item $R>0$ and $Q>0$.
 \end{itemize}
-
-%The solution presented by this technique will be a feedback loop constant which, when multiplied by each current state in $x$ will present the value to be passed as input to the system for the next time instant (for an analog system) or the discrete time input (for a digital system). This constant $k$ is obtained via quadratic programming and will be valid for an infinite time horizon without taking constraints into consideration. 
 
 \par Control via LQR is in closed-loop form, which has the advantage of being robust against parameter uncertainty and reducing the effect of external disturbances. 
 \par In order to visualise the resulting controlled double integrator evolves over time, the feedback law \eqref{eq:feedback} is fed into the system \eqref{eq:dynamic_system}, non zero initial conditions are provided, and the resulting \ac{IVP} is solved. In other words, the objective is to find the soltion to 
@@ -161,7 +150,7 @@ where $x_0$ is the initial conditions.
     x_0 = \begin{bmatrix} x_{1_0} \\ x_{2_0} \end{bmatrix} = \begin{bmatrix} 3 \\ 1 \end{bmatrix}
 \end{equation}
 
-\par Figure \ref{fig:solution_lqr} shows a solution of an LQR controlled double integrator. The regulator used for this example was obtained with $Q = I$ and $R = \rho = 0.1$ as weights to obtain $K$ in equation \ref{eq:k_expression} so that the resulting cost matches \ref{eq:my_cost}.
+\par Figure \ref{fig:solution_lqr} shows the of an \ac{LQR} controlled double integrator. The regulator used for this example was obtained with $Q = I$ and $R = \rho = 0.1$ as weights to obtain $K$ in equation \ref{eq:k_expression} so that the resulting cost matches \ref{eq:my_cost}.
 
 
 
@@ -172,7 +161,7 @@ where $x_0$ is the initial conditions.
 \begin{figure}[h!]
 \centering
 \includegraphics[width=0.8\textwidth]{Images/solution_lqr.jpg}
-\caption{Result for a Linear Quadratic Regulator}
+\caption{\acs{LQR}-Controlled Double Integrator Solution}
 \label{fig:solution_lqr}
 \end{figure}
 
@@ -181,6 +170,7 @@ where $x_0$ is the initial conditions.
 
 
 \section{Single Shooting}
+\label{sec:singleshooting}
 
 \par Single Shooting is a direct method for motion planning. It consists of parameterising, for a given system, the control input signal $u(t)$ as a piece-wise constant function of time, as defined by 
 \begin{equation}
@@ -222,14 +212,14 @@ to obtain the time evolution of $x$.
 \begin{figure}[h!]
 \centering
 \includegraphics[width=0.8\textwidth]{Images/solution_zoh.jpg}
-\caption{Direct Optimisation via a piecewise constant input\\ Computation time: \SI{2.44}{\second}}
+\caption{Direct Optimisation via a piecewise constant input.\\ Computation time: \SI{2.44}{\second}}
 \label{fig:solution_zoh}
 \end{figure}
 
 
 \section{Multiple Shooting}
 
-\par With multiple shooting, $u$ is parameterised in the same way as single shooting (see \ref{eq:single_shooting}). The main difference between multiple shooting and single shooting is that the ODE is calculated for each time interval separately. This ODE uses as initial value $s_i$ and is expressed as
+\par With multiple shooting, $u$ is parameterised in the same way as single shooting (see \ref{sec:singleshooting}). The main difference between multiple shooting and single shooting is that the ODE is calculated for each time interval separately. This ODE uses as initial value $s_i$ and is expressed as
 \begin{equation}
     \dot{x}_i (t; s_i; q_i) = f(x_i(t;s_i,q_i),q_i), \qquad t\in [t_i; t_{i+1}]
     \label{eq:ode_multiple}
@@ -259,7 +249,7 @@ where the path cost $l_i$ can now be calculated for each time interval $t \in [t
 
 \par For a solution $u$ to be obtained with the same duration and order as in single shooting, the optimising algorithm will have to search through twice the amount of variables (an $s_i$ for every $q_i$). However, the larger search space will be sparse due to the presence of constraints, and, as a result, easier to solve, compared to the small and dense optimisation problem produced by single shooting \cite{rao2009survey}.
 
-\par Solutions for multiple shooting will be identical to single shooting and will differ only in computation time. Therefore, examples with this method are not be given.
+\par Solutions for multiple shooting will be identical to single shooting and will differ only in computation time. As a result, examples with this method will not be given.
 
 \section{Quadratic Programming}
 
@@ -273,14 +263,13 @@ where the path cost $l_i$ can now be calculated for each time interval $t \in [t
     & && lb \leq \overline{x} \leq ub
     \end{aligned}
 \end{equation} 
-
-and are not specifically designed to tackle motion planning problems. 
-The first step to apply this technique is to discretise the system's dynamics. A discrete linear system can be represented as
+and are not specifically designed to tackle motion planning problems. The first step in applying quadratic programming to optimal control problems is to discretise the system's dynamics. 
+\par A discrete linear system can be represented as
 \begin{equation}
     \label{eq:discrete_state_space} 
-    \phi_{x_k} + \Gamma_{u_k} - x_{k+1} = 0
+    \phi_{x_k} + \Gamma_{u_k} - x_{k+1} = 0,
 \end{equation}
-where $x_k$ and $u_k$ are the state and input at discrete time $k$, and $\Phi$ and $\Gamma$ are state an input matrices of appropriate dimensions.
+where $x_k$ and $u_k$ are the state and input, respectively, at discrete time $k$, and $\Phi$ and $\Gamma$ are state and input matrices, respectively of appropriate dimensions.
 \par The cost function to optimise that is equivalent to $\ref{eq:quadratic_cost}$ is given by
 \begin{equation}
     J_d = x_N^T Q x_N + \sum_{k=0}^{N-1} x_k^T Q x_k + u_k^T R u_k
@@ -288,21 +277,20 @@ where $x_k$ and $u_k$ are the state and input at discrete time $k$, and $\Phi$ a
 \end{equation}
 where the matrices $Q$ and $R$ will be identical to the continuous time problem.
 
-\par The goal of the quadratic programming optimiser is to obtain values $x_k$ and $u_k$ for all discrete-time instants that minimise \ref{eq:discrete_quad_cost}. In order to formulate the optimisation problem in the form of \ref{eq:gen_quad_prog}, all of the variables to optimise have to be flattened to a the column vector \begin{equation}
+\par The goal of the quadratic programming optimiser is to obtain values $x_k$ and $u_k$ for all discrete-times that minimise \ref{eq:discrete_quad_cost}. In order to formulate the optimisation problem in the form of \ref{eq:gen_quad_prog}, all of the variables to optimise have to be flattened to the column vector \begin{equation}
     \label{eq:quad_prog_xbar}
-    \overline{x} = \begin{bmatrix} x^0_1\ \dots \ x^0_n & u_1^0\ \dots\ u_m^0 & (\dots) & x_1^{N-1}\ \dots\ x_n^{N-1} & u_1^{N-1}\ \dots\ u_m^{N-1} &  x_1^N\ \dots\ x_n^N \end{bmatrix} ^T
+    \overline{x} = \begin{bmatrix} x^0_1\ \dots \ x^0_n & u_1^0\ \dots\ u_m^0 & (\dots) & x_1^{N-1}\ \dots\ x_n^{N-1} & u_1^{N-1}\ \dots\ u_m^{N-1} &  x_1^N\ \dots\ x_n^N \end{bmatrix} ^T,
 \end{equation}
-
 where the superscript is the iteration number that goes from 0 to $N$, $n$ is the dimension of $x$ and $m$ is the dimension of $u$. There will be a total of $(N-1)(n+m)+n$ variables to optimise.
-\par To optimise \ref{eq:discrete_quad_cost}, matrix $H$ will be constructed by repetition of matrices $Q$ and $R$ as shown in 
+\par To optimise \ref{eq:discrete_quad_cost}, matrix $H$ will be constructed by repetition of matrices $Q$ and $R$ as follows
 \begin{equation}
     \label{eq:quad_prog_h}
     H = \begin{bmatrix}
         [Q] & & & & & \\
-        & R & & & &  \\
+        & [R] & & & &  \\
         & & \ddots & & & \\
         & & & [Q] & & \\
-        & & & & R & \\
+        & & & & [R] & \\
         & & & & & [Q]
     \end{bmatrix}
 \end{equation}
@@ -317,7 +305,7 @@ where the superscript is the iteration number that goes from 0 to $N$, $n$ is th
     \end{bmatrix}}_\text{Aeq (dynamics)}
     \overline{x} = \underbrace{\begin{bmatrix} 0 \\ 0 \\ 0 \\ \vdots \\ 0 \end{bmatrix}}_\text{beq dynamics}
 \end{equation}
-where $I$ is the identity matrix with size equals to the dimension of $x$.
+where $I$ is the identity matrix with size equal to the dimension of $x$.
 
 \par The first and last samples of $x$ will be restricted to the initial and final conditions, $x_i$ and $x_f$
 \begin{equation}
@@ -337,7 +325,7 @@ where $I$ is the identity matrix with size equals to the dimension of $x$.
     \overline{x} = \underbrace{\mathbf{x}^f}_\text{beq (final state)}
 \end{equation}
 
-\par The final matrices $Aeq$ and $beq$ that will be plugged in the optimisation software will be given by
+\par The final matrices $Aeq$ and $beq$ that will be inserted into in the optimisation software will be given by
 
 \begin{equation}
     \label{eq:quad_prog_Aeq_total}
@@ -356,7 +344,7 @@ where $I$ is the identity matrix with size equals to the dimension of $x$.
 \par In order to control the double integrator using quadratic programming techniques, the system's discrete-time equivalent will have to be obtained first. Matrices $\Phi$ and $\Gamma$ can be obtained via the Matlab function \texttt{c2d}. $H$ will be as described with $Q$ and $R$ identical to the analytical solutions; $f$ will be zero because there are no non-squared components of the cost function. Figure \ref{fig:solution_quad_prog_un} shows the solution of the quadratic problem for an unconstrained input and identical initial conditions to the analytical example were used.
 
 %Within the context of motion control, these can be used to bound the input $u$, which, in this case, corresponds to leaving every corresponding variable of $\overline{x}$ to $U_{\text{max}}$ or $U_{\text{min}}$ and all others to $\pm \infty$ as shown in \ref{eq:quad_prog_ineq_constr}.
-\par Figure \ref{fig:solution_quad_prog_con} shows a solution to a problem where $u$ is bounded by
+\par Figure \ref{fig:solution_quad_prog_con} shows the solution to a problem where $u$ is bounded by
 \begin{equation}
 \label{eq:quad_prog_ineq_constr}
 \begin{gathered}
@@ -385,9 +373,9 @@ where $U_{\text{max}}$ and $U_{\text{min}}$ are given are given by $\pm 1$. Here
 \section{Monomial Polynomials}
 
 \par Another way to describe trajectories is by using polynomials. If an optimal trajectory can be modelled by a polynomial, then it can be parameterised in terms of the polynomial's coefficients. As a result, the optimisation problem tends to have a much smaller search space compared to, for example, shooting methods because with a relatively low order of polynomial, a whole trajectory over time $t\in [0,T]$ can be obtained will a relatively good cost. 
-\par Polynomial methods are especially suited to deal with \textit{differentially flat systems}\cite{sabetghadam2018cooperative}.   In, differentially flat systems, the state and input variables can be directly expressed, without integrating any differential equation, in terms of the flat output and a finite number of its derivatives\cite{fliess1995flatness}. This means that with coefficients that describe just the flat output it is possible to describe all of the other variables of the system, thus resulting in a reduction of the number of parameters to be optimised.
+\par Polynomial methods are especially suited to deal with \textit{differentially flat systems}(see section \ref{sec:differentiallyflatsystems}). In differentially flat systems, the state and input variables can be directly expressed, without integrating any differential equation, in terms of the flat output and a finite number of its derivatives\cite{fliess1995flatness}. This means that with coefficients that describe just the flat output it is possible to describe all of the other variables of the system, thus resulting in a 
 
-\par The solution provided by the Matlab function \texttt{fmincon} for this method will be a polynomial $\overline{p}$ for $x_1$. Once the optimal coefficients have been obtained the trajectories for $x_1$, $x_2$ and $u$ can be obtained by polynomial derivation and evaluation. This is possible because the system is differentially flat. These polynomials are related in the system of equations
+\par The solution provided by the Matlab function \texttt{fmincon} for the same double integrator problem of section \ref{sec:linearquadraticregulator} with this method will be a polynomial $\overline{p}$ for $x_1$. Once the optimal coefficients have been obtained the trajectories for $x_1$, $x_2$ and $u$ can be obtained by polynomial derivation and evaluation. This is possible because the system is differentially flat. These polynomials are related in the system of equations
 \begin{equation}
     \label{eq:polys_of_double_integrator}
     \begin{cases}
@@ -397,7 +385,7 @@ where $U_{\text{max}}$ and $U_{\text{min}}$ are given are given by $\pm 1$. Here
     \end{cases}
 \end{equation}
  The cost function will be the same as the one used for the analytic method, and with the same initial conditions (see \ref{eq:my_cost} and \ref{eq:initial_conds}).
-\par Figure \ref{fig:solution_pol} shows the solution of a polynomial optimisation problem for a polynomial of order 7. Higher orders where attempted but they took too long to converge. %Here, the variable to optimise $\overline{p}$ contains the coefficients that describes $x_1$. Because the system is deferentially flat, both $x_2$ and $u$ can be obtained as a function of $\overline{p}$  and will also be polynomials.
+\par Figure \ref{fig:solution_pol} shows the solution of a polynomial optimisation problem for a polynomial of order 7. Higher orders where attempted but take too long to converge. %Here, the variable to optimise $\overline{p}$ contains the coefficients that describes $x_1$. Because the system is deferentially flat, both $x_2$ and $u$ can be obtained as a function of $\overline{p}$  and will also be polynomials.
 
 
 \par In order to guarantee the initial and final conditions of the state variable $x$, the linear constraint that has to be introduced is given by
@@ -415,7 +403,7 @@ where $U_{\text{max}}$ and $U_{\text{min}}$ are given are given by $\pm 1$. Here
 \begin{figure}[h!]
 \centering
 \includegraphics[width=0.8\textwidth]{Images/solution_pol.jpg}
-\caption{Direct Optimisation with Polynomials \\ Polynomial order: 7 \\
+\caption{Direct Optimisation with Polynomials. \\ Polynomial order: 7. \\
 Computation time: \SI{1.33}{\second}}
 \label{fig:solution_pol}
 \end{figure}
@@ -424,41 +412,41 @@ Computation time: \SI{1.33}{\second}}
 
 \section{Bezier Curves}
 \label{sec:bezcurves}
+\par A Bezier curve is a parametric curve used in computer graphics and related fields. The curve, is named after Pierre Bezier, who used it in the 1960s for designing curves for the bodywork of Renault cars. \cite{hazewinkelmichiel1997} Other uses include the design of computer fonts and animation. \cite{hazewinkelmichiel1997}
+The mathematical basis for Bezier curves, the Bernstein polynomials, was established in 1912, but the polynomials were not applied to graphics until some 50 years later when mathematician Paul de Casteljau in 1959 developed de Casteljau's algorithm, a numerically stable method for evaluating the curves, and became the first to apply them to computer-aided design at French auto-maker Citroen. \cite{GeraldFarin2002}
 
-\par What follows is a brief summary of the type of polynomials that will be exploited in the thesis.
+\par What follows is a brief summary of the type of Bernstein polynomials that are exploited in this study.
 
 \par A Bernstein polynomial is given by % represented as
 \begin{equation}
     \label{eq:bern_pol}
-    P(\tau) = \sum_{k=0}^n p_k B_{k,n} (\tau), \qquad \tau\in [0,1]
+    P(\tau) = \sum_{k=0}^n \overline{p}_k B_{k,n} (\tau), \qquad \tau\in [0,1]
 \end{equation}
 where $n$ is the order of the polynomial and $\tau$ is the time contraction of $t$, given by 
 \begin{equation}
-    \tau = \frac{t}{T}, \qquad t\in [0,T]
+    \tau = \frac{t}{T}, \qquad t\in [0,T].
     \label{eq:time_delay}
 \end{equation}
-
-\par $p_k$ are the polynomial coefficients or \textit{control points}, and $b_k^n$ are the \textit{Bernstein Basis}, given by 
+\par The $p_k$ are the polynomial coefficients or \textit{control points}, and $b_k^n$ are the \textit{Bernstein Basis}, given by 
 \begin{equation}
 	B^n_k {(\tau)} = \binom{n}{k} {(1 - \tau)}^{n-k} \tau^k
     \label{eq:bern_basis}
 \end{equation}
-\par As a result, a bernstein polynomial of order $n$ is a linear combination of $n+1$ bernstein basis with weights given by $p_k$.
-
-\par The Bernstein Basis, as a function of $\tau$, for 6 different orders, $n$, are plotted, on in each subplot of figure \ref{fig:bernsteinbasis}.
+As a result, a Bernstein polynomial of order $n$ is a linear combination of $(n+1)$ Bernstein basis with weights given by $p_k$.
+\par The Bernstein Basis, as a function of $\tau$, for 6 different orders, $n$, are shown in figure \ref{fig:bernsteinbasis}.
 
 \begin{figure}[h!]
 \centering
 \includegraphics[width=0.8\textwidth]{Images/bernstein_basis.jpg}
-\caption{Representation of the Bernstein Basis for $\tau \in [0,1]$ for orders 0 to 5}
+\caption{Representation of the Bernstein Basis for $\tau \in [0,1]$ for orders $n=0\cdots 5$}
 \label{fig:bernsteinbasis}
 \end{figure}
 
-\par For a polynomial of order $n$, the $i \in {0 .. n}$ control points can be represented on a vector $p$, for example,
+\par For a polynomial of order $n$, the $i \in {0 .. n}$ control points can be represented as a vector on a vector $p$. For example, if $p$ is given by 
 \begin{equation}
-    p = \begin{bmatrix}0\\ 0.5\\ 1\\ 0.7\\ 0.3\\ -0.7\\ -1\\ -0.5\\ -0.1\end{bmatrix}
+    \overline{p} = \begin{bmatrix}0\\ 0.5\\ 1\\ 0.7\\ 0.3\\ -0.7\\ -1\\ -0.5\\ -0.1\end{bmatrix},
 \end{equation}
-\par The plot of the polynomials respective to vector $p$ is in figure \ref{fig:generic_bezier}. The control points on vector $p$ are plotted along time time axis uniformly. What can be seen is that the control points "attract" the curve towards themselves.
+the plot of the polynomial given by these coeeficients is shown in figure \ref{fig:generic_bezier}. The control points on vector $p$ are plotted along time in equidistant time nodes. What can be seen is that the control points "attract" the curve towards themselves.
 
 \begin{figure}[h!]
 \centering
@@ -468,29 +456,24 @@ where $n$ is the order of the polynomial and $\tau$ is the time contraction of $
 \end{figure}
 
 
-\par Two Bernstein Polynomials of the same order, i.e., same number of control points, can be plotted against each other within the time domain $\tau \in [0,1]$. The control points of the curves together form $n+1$ points in 2 dimensions. These are plotted together with the example 2-D plot of \ref{fig:generic_bezier2D}. Once again, like in the 1-D case, the control points "shape" the curve by attracting the curve to themselves.
-\par One thing that is important to note is how the control points'  will play a role on the shape of the curve. Figure \ref{fig:generic_bezier2D_reordered} shows how the same control points can form a completely different curve.
-
-\par Figure~\ref{fig:generic_bezier2D} shows a two dimensional Bernstein polynomial.
-
+\par Two or three Bernstein Polynomials of the same order, i.e., same number of control points, can be plotted against each other within the time domain $\tau \in [0,1]$. The control points of the curves together form $n+1$ points in two or three dimensions. These two or three dimension polynomials are also known as Bezier curves. Figure \ref{fig:generic_bezier} shows a 2-D Bezier Curve, the control points which resulted in it are plotted too. The control points for this curve had a specific order on the underlying Bernstein Polynomial. Changing the oder of the control points on the polynomial will, as a result, produce a different Bezier curve, such as the one in figure \ref{fig:generic_bezier2D_reordered}, despite the control points being the same on the 2-D plot.
 
 \begin{figure}[h!]
 \centering
 \includegraphics[width=0.8\textwidth]{Images/generic_bezier2D.jpg}
-\caption{A 2D Bernstein Polynomial}
+\caption{A 2-D Bernstein Polynomial}
 \label{fig:generic_bezier2D}
 \end{figure}
 
 \begin{figure}[h!]
 \centering
 \includegraphics[width=0.8\textwidth]{Images/generic_bezier2D_reordered.jpg}
-\caption{A 2D Bernstein Polynomial}
+\caption{A 2-D Bernstein Polynomial with Reordered Control Points}
 \label{fig:generic_bezier2D_reordered}
 \end{figure}
 
 
-\par One of the first properties than can be observed in figure~\ref{fig:generic_bezier} is that, within the domain $t \in [0,T]$, the polynomial is limited by a convex hull formed by the control points.
-
+\par One propertiy than can be observed in figure~\ref{fig:generic_bezier} is that, within the domain $t \in [0,T]$, the polynomial is limited by a convex hull \cite{cichella2018bernstein} formed by the control points.
 \par The initial and final values of $P(t)$ in the interval $[0,T]$ are given by
 \begin{equation}
     \label{eq:bern_in_fin}
@@ -521,7 +504,7 @@ and the derivative and integral are given by
     \label{eq:bernderivmat}
 \end{equation}
 
-\par The control points of the Anti-Derivative/Primitive can be obtained similarly to the derivation by multiplying the control points to a primitive matrix (my discovery) and adding a vector:
+\par The control points of the Anti-Derivative/Primitive can be obtained similarly to the derivation by multiplying the control points to a primitive matrix \cite{privateconversationprimitive}, and adding a vector:
 \begin{equation}
     p = A \cdot \dot{p}  + p_0
 \end{equation}
@@ -539,12 +522,12 @@ where $p_0$ is the initial values of $P$ and the matrix A is given by
 
 \par A Bernstein polynomial of degree $N$ and coefficients $p_{k,N}\in \mathbb{R}, k = 0,\dots,N$ can be expressed as a Bernstein polynomial of degree $M$ with $M>N$, with coefficients $p_{k,M} \in \mathbb{R}, k = 0,\dots,M$ given by 
 \begin{equation}
-    p_{k,M} = \sum_{j=\text{max}(0,k+M-N)}^{\text{min}(N,k)} \frac{{M-N \choose k-j}{N\choose j}}{{M\choose k}} p_{j,N} \in \mathbb{R}^n
+    p_{k,M} = \sum_{j=\text{max}(0,k+M-N)}^{\text{min}(N,k)} \frac{{M-N \choose k-j}{N\choose j}}{{M\choose k}} p_{j,N} \in \mathbb{R}^n,
 \end{equation}
-
-\par The control points for the degree elevation can also be obtained by multiplying the control points vector by a matrix $\boldsymbol{E}$ whose indexes are given by 
+which is known as degree elevation. In other words, it is possible find a polynomial with $M+1$ control points such that it's identical to a curve with order $N+1$ within time $t\in[0,T]$.
+\par The control points for the degree elevation can also be obtained by multiplying the control points vector by a matrix $\boldsymbol{E}$ whose indices are given by 
 \begin{equation}
-    \label{eq:bernsteinelevindexes}
+    \label{eq:bernsteinelevindices}
     \boldsymbol{E}_{ij} = \frac{{N\choose j}{M-N\choose i-j}}{{M\choose i}}
 \end{equation}
 
@@ -561,15 +544,15 @@ where $p_0$ is the initial values of $P$ and the matrix A is given by
     \sum^{m}_{i=0}  \left(f_{i,n} \pm \sum_{j=\text{max}(0,i-m+n)}^{\text{min}(n,i)} \frac{\binom{n}{j}\binom{m-n}{i-j}}{\binom{m}{i}} g_{j,n}\right) B_{i,m+n}(t)
 \end{equation}
 
-\par The De Casteljau's algorithm is a recursive method to evaluate polynomials in Bernstein form. A geometric interpretation of this algorithm presented as follows:
+\par The De Casteljau's algorithm \cite{shene2012finding} is a recursive method to evaluate polynomials in Bernstein form. A geometric interpretation of this algorithm presented as follows:
 \begin{enumerate}
-    \item Connect the consecutive control points in order to create the control polygon of the curve.
-	\item Subdivide each line segment of this polygon with the ratio $t:(1-t)$ and connect the obtained points. This way a new polygon is obtained having one fewer segment.
+    \item Connect the consecutive control points in order to create the control polygon of the curve;
+	\item Subdivide each line segment of this polygon with the ratio $t:(1-t)$ and connect the obtained points which results in a new polygon with one fewer control points;
     \item Repeat the process until a single point is achieved – this is the point of the curve corresponding to the parameter $t$.
 \end{enumerate}
 
-Figure~\ref{fig:deCasteljau} illustrates the breakdown of the control points into polygons and sub polygons. The use of this algorithm is popular algorithm in Computer Aided Graphic Design.
-\par The evaluation of the curve can be done analytically. For a Bernstein Polynomial $\boldsymbol{x}_N:[0,t_f]\rightarrow \mathbb{R}^n$, and a scaler $t_{div}\in [0,t_f]$, the Bernstein polynomail at $t_{div}$ can be computer using the following recursive relation:
+Figure~\ref{fig:deCasteljau} illustrates the breakdown of the control points into polygons and sub polygons. 
+\par The evaluation of the curve can be carried analytically. For a Bernstein Polynomial $\boldsymbol{x}_N:[0,t_f]\rightarrow \mathbb{R}^n$, and a scaler $t_{div}\in [0,t_f]$, the Bernstein polynomail at $t_{div}$ can be computed using the following recursive relation:
 \begin{equation}
 \begin{gathered}
     \overline{\boldsymbol{x}}^{[0]}_{i,N} = \overline{\boldsymbol{x}}_{i,N},\quad i=0,\dots, N  \\
@@ -600,14 +583,12 @@ Moreover, the Bernstein polynomial can be subdivided at $t_{div}$ into two $N$th
 %    \item[$f(x,t)$] is the dynamic model   
 %\end{description}
 
-\par The use of Bernstein polynomials as an alternative to monomial polynomials, as presented in the previous section, is preferable (see~\cite{cichella2018bernstein}). 
-
 The convex hull property of these polynomials will prove useful in an algorithm that calculates distance between curves, which will be used in deconfliction of trajectories in multiple vehicle control. By just knowing the position of the control points in the space, it is possible to guarantee constraint satisfaction in the whole trajectory and not just in the control points.
 
 \par Just as with monomial polynomials, when these Bernstein polynomials are applied to differentially flat systems, a reduction of the number of parameters to optimise is possible because with just a flat output, all state variables can be derived. If the system is not differentially flat, then parameters for all state variables need to be defined and optimised but will be subject to the constrained imposed by the system's dynamics.
-The optimisation problems developed for motion planning in this work center around the usage of what is known as Bernstein polynomials.
+The optimisation problems developed for motion planning in this study center around the usage of what is known as Bernstein polynomials.
 
-\par The solution obtained by the Matlab function \texttt{fmincon} will provide the coefficients $\overline{p}$ for the Bernstein polynomial of state variable $x_1$. 
+\par The solution obtained by the Matlab function \texttt{fmincon} for the same double integrator problem of section \ref{sec:linearquadraticregulator} with this Bernstein polynomial based approach will provide the coefficients $\overline{p}$ for the Bernstein polynomial of state variable $x_1$. 
 
 \par Figure \ref{fig:bernstein_1d} shows the solution for the same quadratic optimisation problem and with the same initial conditions as the previous sections. The red circles in the figure show the distribution of the obtained coefficients. The resulting polynomial has order 14.
 
@@ -644,11 +625,10 @@ is said to be \textit{differentially flat} \cite{fliess1995flatness} or simply \
     \item every component of $y$ may be expressed as a function of the system variables and of a finite number of their time-derivatives. 
 \end{itemize}
 
-\par The flat output has, in general, a clear physical interpretation and captures the fundamental properties of a given system and its determination allows to simplify considerably the control design. This implies that there is a fictitious \textit{flat output} that can explicitly express all states and inputs in terms of the flat output and a finite number of derivatives. 
+\par The flat output has, in general, a clear physical interpretation and captures the fundamental properties of a given system and its determination allows to simplify considerably the control design. This implies that there is a fictitious \textit{flat output} that can explicitly express all states and inputs in terms of the flat output and a finite number of derivatives, thus reducing the number of parameters to be optimised.
 
 
 
 \section{Remarks}
 
-\par Out of all of the presented parameterisation methods, the preferred is Bernstein polynomials because they provide fast solutions and, as will be seen in later chapters, will work well for both prove advantageous for differentially and non differentially flat systems.
-
+\par Out of all of the presented direct methods, the preferred is Bernstein polynomials because they provided fast solutions for the simple double integrator problem and, as will be seen in later chapters, will prove advantageous for differentially and non differentially flat dynamic systems.
