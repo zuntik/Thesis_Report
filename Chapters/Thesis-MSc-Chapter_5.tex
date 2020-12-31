@@ -9,10 +9,10 @@
 \label{chap:results}
 
 
-\section{Description of the implemented code}
+\section{Description of the Implemented Code}
 \label{sec:description_implementation}
 
-\par The variables for the motion planning problem are each vehicle's state variables and inputs, as explained in section \ref{sec:theoptproblem}. Each of these variables will be referred to as curves. Optimisation algorithms cannot take continuous functions as variables, therefore, some form of parameterisation of each curve is necessary, as exemplified in some of the algorithms of chapter \ref{chap:theory}. Here, each curve will be represented as a Bernstein Polynomial with order $N$, which will require $N+1$ control points. A distinction is made between state variables and inputs: state variables must have established initial and final conditions, inputs do not. This implies that for state variables, the initial and final control points must be fixed, therefore, they do not need to participate on the optimisation problem. The following matrix represents how the control points are stored so that they can be accessed by all functions that perform operations on the curves.
+\par The variables for the motion planning problem are each vehicle's state variables and inputs, as explained in section \ref{sec:theoptproblem}. Each of these variables will be referred to as \textit{curves}. optimization algorithms cannot take continuous functions as variables, therefore, some form of parameterization of each curve is necessary, as exemplified in some of the algorithms of chapter \ref{chap:theory}. Here, each curve will be represented as a Bernstein Polynomial with order $N$, which will require $N+1$ control points. A distinction is made between state variables and inputs: state variables must have established initial and final conditions, inputs do not. This implies that for state variables, the initial and final control points must be fixed; therefore, they do not need to participate on the optimization problem. The following matrix represents how the control points are stored so that they can be accessed by all functions that perform operations on the curves.
 
 \begin{equation}
     \begin{bmatrix}
@@ -24,13 +24,13 @@
     \label{eq:matrixofvariables}
 \end{equation}
 
-\par It is believed that \texttt{fmincon()} performs better when all variables are stored in a line vector \cite{privateconversationendpoints}, therefore, a function called \texttt{matrify()} is necessary in order to transform the flattened optimisation variable to the matrix of equation (\ref{eq:matrixofvariables}). 
-\par Elements marked in yellow do not participate in the optimisation algorithm. They are concatenated to this matrix in \texttt{matrify()}. 
+\par It is believed that \texttt{fmincon()} performs better when all variables are stored in a line vector \cite{privateconversationendpoints}; therefore, a function called \texttt{matrify()} is necessary in order to transform the flattened optimization variable to the matrix of equation (\ref{eq:matrixofvariables}). 
+\par Elements marked in yellow do not participate in the optimization algorithm. They are concatenated to this matrix in \texttt{matrify()}. 
 
-\par High orders are preferable for each curve \cite{cichella2018bernstein} because the higher the curve, the closer the control points are to the "matching" point in time of the curve, which is achieved once an optimisation problem finishes. Chapter \ref{chap:results} exemplifies show the control points approximate to the curve and how it is advantageous to produce the dynamics.
+\par High orders are preferable for each curve \cite{cichella2018bernstein} because the higher the curve, the closer the control points are to the "matching" point in time of the curve, which is achieved once an optimization problem finishes. Chapter \ref{chap:results} shows how the control points approximate to the curve and how it is advantageous to produce the dynamics.
 
 
-\par The optimisation problem is formulated by constructing a data structure with the fields of table \ref{tab:constants_description}.
+\par The optimization problem is formulated by constructing a data structure with the fields of table \ref{tab:constants_description}.
 
 
 \begin{table}[]
@@ -47,13 +47,13 @@
 \texttt{min\_dist\_int\_veh} & \begin{tabular}[c]{@{}l@{}}minimum distance between \\ vehicles for every point in time\end{tabular} & \begin{tabular}[c]{@{}l@{}}no\\ default: \texttt{0}\end{tabular} & \texttt{.8} \\ \hline
 \texttt{numinputs} & \begin{tabular}[c]{@{}l@{}}number of input variables\\ (don't have initial conditions)\end{tabular} & \begin{tabular}[c]{@{}l@{}}no\\ default: \texttt{0}\end{tabular} &  \\ \hline
 \texttt{uselogbar} & \begin{tabular}[c]{@{}l@{}}make the problem completely \\ unconstrained and use log \\ barrier functionals\end{tabular} & \begin{tabular}[c]{@{}l@{}}no\\ default: \texttt{false}\end{tabular} &  \\ \hline
-\texttt{usesigma} & \begin{tabular}[c]{@{}l@{}}a boolean for the usage of the \\ sigma function if log barrier \\ functionals are to be used\end{tabular} & \begin{tabular}[c]{@{}l@{}}no\\ default: \texttt{false}\end{tabular} &  \\ \hline
+\texttt{usesigma} & \begin{tabular}[c]{@{}l@{}}a boolean for the use of the \\ sigma function if log barrier \\ functionals are to be used\end{tabular} & \begin{tabular}[c]{@{}l@{}}no\\ default: \texttt{false}\end{tabular} &  \\ \hline
 \texttt{costfun\_single} & \begin{tabular}[c]{@{}l@{}}a function used to calculate \\ the running cost for each \\ singular vehicle\end{tabular} & yes & \texttt{@costfun} \\ \hline
 \texttt{dynamics} & \begin{tabular}[c]{@{}l@{}}a function that describes how the \\ non linear dynamics of the state \\ variables and inputs are linked\end{tabular} & yes & \texttt{@dynamics} \\ \hline
-\texttt{init\_guess} & \begin{tabular}[c]{@{}l@{}}a function that provides an initial \\ guess for the optimisation problem \\ which may  speed up the process \\ of optimisation\end{tabular} & \begin{tabular}[c]{@{}l@{}}no \\ default:\\ \texttt{@rand\_init\_guess}\end{tabular} & \texttt{@init\_guess} \\ \hline
+\texttt{init\_guess} & \begin{tabular}[c]{@{}l@{}}a function that provides an initial \\ guess for the optimization problem \\ which may  speed up the process \\ of optimization\end{tabular} & \begin{tabular}[c]{@{}l@{}}no \\ default:\\ \texttt{@rand\_init\_guess}\end{tabular} & \texttt{@init\_guess} \\ \hline
 \texttt{recoverxy} & \begin{tabular}[c]{@{}l@{}}a function that returns the x and y\\ variables by solving just the initial \\ value problem of the inputs\end{tabular} & yes & \texttt{@recoverxy} \\ \hline
 \end{tabular}
-\caption{Description of the constants for optimisation}
+\caption{Description of the constants for optimization}
 \label{tab:constants_description}
 \end{table}
 
@@ -68,14 +68,14 @@
     \item \texttt{dynamics} takes in an arbitrary X matrix and constants structure (to provide pre computer information like a derivation matrix) and must return a column vector which is zeros when all of the dynamic constraints are respected
 \end{itemize}
 
-\par The data structure for the nonlinear optimisation problem is then passed to a function called \texttt{run\_problem} which returns the control points for each of the defined variable along with computation time.
+\par The data structure for the nonlinear optimization problem is then passed to a function called \texttt{run\_problem} which returns the control points for each of the defined variable along with computation time.
 
 \subsection{Dynamics}
 \label{sec:dynamics}
 
 \par The dynamics are guaranteed with the formulation of \ref{eq:multi_cost_bern}. This means that the code version for the dynamics plus kinematics for the Medusa vehicle, for example, which are  \ref{eq:simple_medusa_kinematics} and \ref{eq:simple_medusa_dynamics}, become
 
-\begin{lstlisting}[language=matlabfloz,caption={\mcode{Matlab Function}}]
+\begin{lstlisting}[language=matlabfloz,caption={\mcode{Dynamics Equality Constraint}}]
 ceq = [
     DiffMat*x - u.*cos(yaw) + v.*sin(yaw) - Vcx;
     DiffMat*y - u.*sin(yaw) - v.*cos(yaw) - Vcy;
@@ -92,14 +92,14 @@ ceq = [
 
 
 \section{Results}
-\par The following results are based on solving the optimisation problem \eqref{eq:multi_cost_bern} with the implementation described in chapter \ref{chap:implementation}. Simulations were carried out using Sequential Quadratic Programming \cite{10.1007/978-0-387-35514-6_7} on models presented in chapter \ref{chap:autonomousvehiclemodels}. Simulations were run on a 4 × Intel\textsuperscript{\textcopyright} Core\texttrademark i5-7200U CPU @ 2.50GHz processor. 
+\par The following results are based on solving the optimization problem \eqref{eq:multi_cost_bern} with the implementation described in chapter \ref{chap:implementation}. Simulations were carried out using Sequential Quadratic Programming \cite{10.1007/978-0-387-35514-6_7} on models presented in chapter \ref{chap:autonomousvehiclemodels}. Simulations were run on a 4 × Intel\textsuperscript{\textcopyright} Core\texttrademark i5-7200U CPU @ 2.50GHz processor. 
 \par The unicycle model has a total of 5 state variables while the Medusa model has a total of 6 state variables plus 2 inputs. Upper and lower bounds for each variable for each vehicle were implemented, as explained in section \ref{sec:dynamics}, by finding the biggest and smallest control points of each polynomial. For the examples presented in this chapter, the bounds that were used are those presented in table \ref{tab:variablebounds} which were chosen to represent realistic values of a vehicle.
 
 \begin{table}[h!]
 \centering
 \begin{tabular}{|l|l|l|l|}
 \hline
-& Variable & Starting Conditions & Final Conditions \\ \hline
+& Variable & Lower Bounds & Upper Bounds \\ \hline
 Dubin's Car & $x\ (\si{\meter})$ & $-\infty$ & $\infty$ \\
 & $y\ (\si{\meter})$ & $-\infty$ & $\infty$ \\
 & $\psi\ (\si{\radian})$ & $-\infty$ & $\infty$ \\
@@ -119,12 +119,12 @@ Medusa & $x\ (\si{\meter})$ & $-\infty$ & $\infty$ \\
 \label{tab:variablebounds}
 \end{table}
 
-\par A range of experiments were performed with the optimisation algorithm in order to study its behaviour with changing parameters. Out of all of the experiments that were performed, the most relevant are presented here.
+\par A range of experiments were performed with the optimization algorithm in order to study its behaviour with changing parameters. Out of all of the experiments that were performed, the most relevant are presented here.
 
 
-\subsection{No obstacles}
+\subsection{No Obstacles}
 
-\par The first problem considered here is, for both a single Dubin's vehicle and a single Medusa vehicle, with initial and final states described in table \ref{tab:firstproblem} and with no obstacles. Figure \ref{fig:noobstaclesfigures} show solutions for order 20 and a time horizon of \SI{60}{\second}. The top two plots minimize the square of the surge of the Dubin's vehicle and Medusa vehicle, while the bottom two minimize the thrust $\tau_u$ and torque $\tau_r$, respectively. This figure, and all other figures, flip x and y axis which is standard for marine vehicles.
+\par The first problem considered here is, for both a single Dubin's car and a single Medusa vehicle, with initial and final states described in table \ref{tab:firstproblem} and with no obstacles. Figure \ref{fig:noobstaclesfigures} show solutions for order 20 and a time horizon of \SI{60}{\second}. The top two plots minimize the square of the surge of the Dubin's car and Medusa vehicle, while the bottom two minimize the thrust $\tau_u$ and torque $\tau_r$, respectively. This figure, and all other figures, flip x and y axis which is standard for marine vehicles.
 
 \begin{table}[h!]
 \centering
@@ -153,9 +153,9 @@ $r\ (\si{\radian\per\second})$ & 0 & 0 \\
 \par The ten plotted arrows in each plot show the position and heading of the vehicles over equidistant time intervals. The closer the arrows are to each other, the slower the vehicle are during the respective time interval. The initial guess that is provided to these examples are a set of random values that respect the variable bounds established earlier. These examples serve as baselines for comparison once obstacles and multiple vehicles are introduced in the next sections.
 
 
-\section{Obstacles}
+\subsection{Obstacles}
 
-\par Obstacle avoidance is implemented with the algorithms explained in sections \ref{sec:mindistintveh} and \ref{sec:mindistconvshapes}. The top left solution of figure \ref{fig:noobstaclesfigures} serves as the baseline for comparison without obstacles. Specifically, the solutions presented in this section use the same velocity minimisation running cost (min $\int_0^T v^2$), the same initial and final conditions (\ref{tab:firstproblem}), and the same order of polynomial $N=20$ for the Dubin's vehicle. The only difference is the presence of the different obstacles. Figure \ref{fig:obstaclesfigures} show the solutions of the performed tests. The titles of the plots which say "Constrained" refer to when the environmental obstacle is implemented as an optimisation constraint. The titles which say "Unconstrained" refer to plots resulting from unconstrained optimisation, i.e., the environmental constraint was moved to the cost via the Log Barrier Functional. It is expected that the trajectories of the unconstrained problems are not perfectly tangent to the circle. If the running cost were not added to the total cost, the trajectory would be as far away as possible from the curve while still respecting the dynamic constraints; this is because the derivative of the Log Barrier Functional is always lower than zero even when the solution is feasible. The gap that we see between the curve and the obstacle is the result of balancing the running cost and the Log Barrier component. One implication is that running cost can never be ideal because the vehicle had to travel an extra amount of distance. Using the Log Barrier function, however, has the advantage of potentially reducing the runtime of the optimisation process, as can be seen by comparing the computation times of the problems with the polygon obstacles. Furthermore the large difference in computation time between polygon obstacles and circle obstacles can be explained by the fact that the \textit{Minimum Distance to Polygon} algorithm is iterative, which means that all of the duration of the individual runs quickly add up.
+\par Obstacle avoidance is implemented with the algorithms explained in sections \ref{sec:mindistintveh} and \ref{sec:mindistconvshapes}. The top left solution of figure \ref{fig:noobstaclesfigures} serves as the baseline for comparison without obstacles. Specifically, the solutions presented in this section use the same velocity minimisation running cost (min $\int_0^T v^2$), the same initial and final conditions (\ref{tab:firstproblem}), and the same order of polynomial $N=20$ for the Dubin's car. The only difference is the presence of the different obstacles. Figure \ref{fig:obstaclesfigures} show the solutions of the performed tests. The titles of the plots which say "Constrained" refer to when the environmental obstacle is implemented as an optimization constraint. The titles which say "Unconstrained" refer to plots resulting from unconstrained optimization, i.e., the environmental constraint was moved to the cost via the Log Barrier Functional. It is expected that the trajectories of the unconstrained problems are not perfectly tangent to the circle. If the running cost were not added to the total cost, the trajectory would be as far away as possible from the curve while still respecting the dynamic constraints; this is because the derivative of the Log Barrier Functional is always lower than zero even when the solution is feasible. The gap that we see between the curve and the obstacle is the result of balancing the running cost and the Log Barrier component. One implication is that running cost can never be ideal because the vehicle had to travel an extra amount of distance. Using the Log Barrier function, however, has the advantage of potentially reducing the runtime of the optimization process, as can be seen by comparing the computation times of the problems with the polygon obstacles. Furthermore the large difference in computation time between polygon obstacles and circle obstacles can be explained by the fact that the \textit{Minimum Distance to Polygon} algorithm is iterative, which means that all of the duration of the individual runs quickly add up.
 
 
 \begin{figure}[h!]
@@ -168,7 +168,7 @@ $r\ (\si{\radian\per\second})$ & 0 & 0 \\
 
 \subsection{Variation of cost with order}
 
-\par A way of calculating solutions for high orders while maintaining low computation time is by running the optimisation process on a random guess with low order, then perform degree elevation which increases the order of the solution and re-feed that solution to the same problem as the initial guess. In order to demonstrate this process, a new optimisation problem was is presented. It uses the Dubin's vehicle but with initial and final conditions given by table \ref{tab:increasingNproblem}. 
+\par A way of calculating solutions for high orders while maintaining low computation time is by running the optimization process on a random guess with low order, then perform degree elevation which increases the order of the solution and re-feed that solution to the same problem as the initial guess. In order to demonstrate this process, a new optimization problem was is presented. It uses the Dubin's car but with initial and final conditions given by table \ref{tab:increasingNproblem}. 
 
 \begin{table}[h!]
 \centering
@@ -222,13 +222,13 @@ $r\ (\si{\radian\per\second})$ & 0 & 0 \\
 \begin{figure}[h!]
 \centering
 \includegraphics[width=\textwidth]{Images/results/ivpsoundness.png}
-\caption{Optimisation solutions accompanied by the Initial Value Solutions}
+\caption{optimization solutions accompanied by the Initial Value Solutions}
 \label{fig:ivpsoundness}
 \end{figure}
 
-\section{Multiple Vehicles}
+\subsection{Multiple Vehicles}
 
-\par To illustrate the use of multiple vehicles, a series of runs are presented in figure \ref{fig:multiplevehicles}. The initial and final conditions other than position are given by table \ref{tab:multivehconditions} with order $N=10$. Figure \ref{fig:timeevolutionmultiplevehicles} shows how the computation time increases with the added vehicles. These solutions are run with the inter vehicular constraints implemented as constraints on the optimisation problem, as opposed to imposing them in the cost via the Log Barrier Functional. Specifically, the imposed constraint is a separation of \SI{3}{\meter} between trajectories calculated with the sampling based algorithm. Given that the problem focuses on trajectories, there is no problem in seeing the paths intersect. The same two vehicle problem with order $N=10$ takes a total of \SI{56}{\second} with the iterative \textit{Berstein to a point} algorithm which again shows how using an iterative algorithm with an optimisation problems adds a lot of computation time.
+\par To illustrate the use of multiple vehicles, a series of runs are presented in figure \ref{fig:multiplevehicles}. The initial and final conditions other than position are given by table \ref{tab:multivehconditions} with order $N=10$. Figure \ref{fig:timeevolutionmultiplevehicles} shows how the computation time increases with the added vehicles. These solutions are run with the inter vehicular constraints implemented as constraints on the optimization problem, as opposed to imposing them in the cost via the Log Barrier Functional. Specifically, the imposed constraint is a separation of \SI{3}{\meter} between trajectories calculated with the sampling based algorithm. Given that the problem focuses on trajectories, there is no problem in seeing the paths intersect. The same two vehicle problem with order $N=10$ takes a total of \SI{56}{\second} with the iterative \textit{Berstein to a point} algorithm which again shows how using an iterative algorithm with an optimization problems adds a lot of computation time.
 \begin{table}[h!]
 \centering
 \begin{tabular}{|l|l|l|}
@@ -264,7 +264,7 @@ $r\ (\si{\radian\per\second})$ & 0 & 0 \\
 \subsection{Trajectory Tracking Soundness}
 
 \par In section \ref{sec:ivproblem}, it was suggested that soundness of the solution can be verified by feeding the returned inputs into a trajectory tracking algorithm and calculating the resulting size of error correction term. The better the inputs, the lower is the needed correction. A trajectory tracking algorithm that can perform this task is not available here. This task is carried out based on a graphical comparison of the inputs returned by the motion planning algorithm and the inputs calculated by a conventional trajectory tracking algorithm, such as the one found in [21], which calculates the inputs solely on error to the desired position.
-\par Figure \ref{fig:trajectrackedprob} shows the solution of a constrained optimisation problem for the Medusa Vehicle with order $N=50$, with initial and final constraints given by table \ref{tab:soundnessproblem}. 
+\par Figure \ref{fig:trajectrackedprob} shows the solution of a constrained optimization problem for the Medusa Vehicle with order $N=50$, with initial and final conditions given by table \ref{tab:soundnessproblem}. 
 
 \begin{table}[h!]
 \centering
@@ -283,24 +283,24 @@ $r\ (\si{\radian\per\second})$ & 0 & 0 \\
 \label{tab:soundnessproblem}
 \end{table}
 
-\par The computation time of the optimisation problem is \SI{113}{\second}. It also shows the result of applying the Trajectory Tracking controller in \cite{Vanni2007CoordinatedMC}. The inputs, which are surge and torque, are obtained by the optimisation problem and the Trajectory Tracking algorithm are shown in figure \ref{fig:inputscomparison}. It can be seen that the resulting inputs look similar, which validates the solution of the optimisation problem.
+\par The computation time of the optimization problem is \SI{113}{\second}. It also shows the result of applying the Trajectory Tracking controller in \cite{Vanni2007CoordinatedMC}. The inputs, which are surge and torque, are obtained by the optimization problem and the Trajectory Tracking algorithm are shown in figure \ref{fig:inputscomparison}. It can be seen that the resulting inputs look similar, which validates the solution of the optimization problem.
 
 \begin{figure}[h!]
 \centering
 \includegraphics[width=0.8\textwidth]{Images/results/trajectrackedprob.png}
-\caption{Optimisation Problem Solution and Trajectory Tracked Solution}
+\caption{optimization Problem Solution and Trajectory Tracked Solution}
 \label{fig:trajectrackedprob}
 \end{figure}
 
 \begin{figure}[h!]
 \centering
 \includegraphics[width=0.8\textwidth]{Images/results/inputscomparison.png}
-\caption{Comparison of the Optimisation Problem's Inputs and the Trajectory Tracking Inputs}
+\caption{Comparison of the optimization Problem's Inputs and the Trajectory Tracking Inputs}
 \label{fig:inputscomparison}
 \end{figure}
 
 
-\subsection{Final Problem}
+\subsection{Final Example}
 \par A final example of the application is shown in figure \ref{fig:finalexample}. It combines the various algorithms for inter-vehicle collision and obstacle avoidance  and the use of the Log Barrier Functional to achieve the fastest possible computation time.
 
 \begin{figure}[h!]

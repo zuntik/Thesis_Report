@@ -8,13 +8,13 @@
 % The following line allows to ref this chapter
 \label{chap:implementation}
 
-\par In this chapter, implementation of a Direct Method based on the use of Bernstein polynomials is described. This chapter focuses on formalising the optimisation problem for multiple vehicles. In chapter \ref{chap:results}, solutions for particular optimisation problems are presented based on the formulations if this chapter.
+\par In this chapter, implementation of a Direct Method based on the use of Bernstein polynomials is described. This chapter focuses on formalising the optimization problem for multiple vehicles. In chapter \ref{chap:results}, solutions for particular optimization problems are presented based on the formulations of this chapter.
 
-\section{The Optimisation Problem}
+\section{The Optimization Problem}
 \label{sec:theoptproblem}
 
 \par The Motion Planning problem for multiple vehicles that are the focus of this project consists of a "go-to" formation manoeuvre \cite{sabetghadam2018cooperative}. It consists of the simultaneous arrival of a formation of vehicles to desired locations whilst simultaneously avoiding collisions between each other and the environment.
-\par Just as for optimisation for a single vehicle, (see section \ref{sec:optimprob_intro}) motion planning for multiple vehicles will also be based on the minimisation of an appropriate cost function. Here, however, the cost will be the result of the sum of the costs of each individual vehicle and an added constraint will be necessary that will take into account inter-vehicular collisions. 
+\par Just as for optimization for a single vehicle, (see section \ref{sec:optimprob_intro}) motion planning for multiple vehicles will also be based on the minimisation of an appropriate cost function. Here, however, the cost will be the result of the sum of the costs of each individual vehicle and an added constraint will be necessary that will take into account inter-vehicular collisions. 
 
 \par The optimal control formulation for this motion planning problem is defined as
 \begin{equation}
@@ -30,7 +30,7 @@
 with the same definitions as in section \ref{sec:optimprob_intro} applied to each vehicle $i=1\dots N_v$ of of $N_v$ vehicles but where $h(.)$ must also handle inter-vehicle constraints.
 \par A problem that only has the integral term $\sum_{v=1}^{N_v} L_v(x^{(v)}(t),u^{(v)}(t))$ is said to be in \textit{Lagrange form}, a problem that optimises only the boundary objective $\sum_{v=1}^{N_v} \Psi_v(x(T))$ is said to be in \textit{Mayer form} and a problem with both terms is said to be in \textit{Bolza form}. An example where only the \text{Mayer form} would be necessary could be a situation where the desired destination of the vehicles does not have enough room for them all to be arranged in their desired positions. Therefore, the goal of the optimiser is to find the closest to the desired positions.
 
-\par A direct method based on Bernstein polynomials is used here. This means that some or all of the state variables/inputs are approximated by polynomials, each with the same order $N$. By using these polynomails all of the states and inputs for each vehicle combined will produce a total of ($N_v \times (n_u+n_x)\times (N+1))$ control points.
+\par A direct method based on Bernstein polynomials is used here. This means that some or all of the state variables/inputs are approximated by polynomials, each with the same order $N$. By using these polynomials all of the states and inputs for each vehicle combined will produce a total of ($N_v \times (n_u+n_x)\times (N+1))$ control points.
 \par Let $t_0$, $t_1$, ..., $t_N$ be a set of equidistant \textit{time nodes} such that $t_j= j\frac{t_N}{N}$, with $T>0$. By following the notation of Bernstein polynomials:
 \begin{equation}
     \begin{gathered}
@@ -40,7 +40,7 @@ with the same definitions as in section \ref{sec:optimprob_intro} applied to eac
 \end{equation}
 with $x_N: [0,T]\rightarrow \mathbb{R}^{n_x}$ and $u_N:[0,T]\rightarrow \mathbb{R}^{n_u}$. In this equation above, $\overline{x}_{j,N}\in \mathbb{R}^{n_x}$ and $\overline{u}_{j,N}\in \mathbb{R}^{n_u}$ are Bernstein coefficients. Let $\overline{x}_N\in \mathbb{R}^{n_x\times (N+1)}$ and $\overline{u}_N\in \mathbb{R}^{n_u}\times(N+1)$ be defined as $\overline{x}_N = [\overline{x}_{0,N},\dots, \overline{x}_{N,N}]$, and $\overline{u}_N = [\overline{u}_{0,N},\dots, \overline{u}_{N,N}]$
 
-\par The optimisation problem now becomes 
+\par The optimization problem now becomes 
 \begin{equation}
     \label{eq:multi_cost_bern}
     \begin{aligned}
@@ -52,7 +52,7 @@ with $x_N: [0,T]\rightarrow \mathbb{R}^{n_x}$ and $u_N:[0,T]\rightarrow \mathbb{
     \end{aligned}
 \end{equation}
 where $D_{j,k}$ is the $(j,k)$-th entry of the differentiation matrix $D_N = D_{N-1}E^N_{N-1}\in \mathbb{R}^{(N+1)\times(N+1)}$ that is obtained by combining the Bernstein differentiation matrix \eqref{eq:bernderivmat} with the Bernstein degree elevation matrix whose indices are given by \eqref{eq:bernsteinelevindices}.
-\par What this new optimisation problem means is that cost, and constraints dealt with $h(.)$ can treat the control points as actual sample of the respective polynomial functions. On the other hand, the dynamics assume that the control points are good enough approximations for the polynomial functions themselves. As a result, the equality constraint $\dot{x}=f(x,u)$ is applied to each control point instead of all infinite points of the respective polynomials.It also means that the cost can be obtained by applying the running and terminal costs to the control points.
+\par What this new optimization problem means is that cost, and constraints dealt with $h(.)$ can treat the control points as actual sample of the respective polynomial functions. On the other hand, the dynamics assume that the control points are good enough approximations for the polynomial functions themselves. As a result, the equality constraint $\dot{x}=f(x,u)$ is applied to each control point instead of all infinite points of the respective polynomials.It also means that the cost can be obtained by applying the running and terminal costs to the control points.
 \par Let $(x,u)$, be a feasible solution to problem \ref{eq:multi_cost}. If the the solution if is continuous, then problem \ref{eq:multi_cost_bern} admits a feasible solution too. Moreover, let $(x^*,u^*)$ be an optimal solution to \ref{eq:multi_cost_bern} and $\{(x_N^*,u_N^*)\}^\infty_{N=N_1}$ be a sequence of optimal solution to problem \ref{eq:multi_cost_bern}, it can be proven that 
 \begin{equation}
     \underset{N\rightarrow\infty}{\text{lim}} (x^*_N(t),u^*_N(t)) = (x^*(t),u^*(t)),
@@ -65,7 +65,7 @@ which means that the higher the order $N$ the closer to the true cost the soluti
 \label{sec:logbarrierfunc}
 
 \par A log barrier functional can be added to the cost functional such that the motion planning problem becomes unconstrained, which is preferable because solutions to unconstrained problems generally are obtained with a lower computation time. Specifically, the inequality constraints no longer become constraints and are instead moved to the cost functional by applying a log barrier functional to them.
-\par An optimisation problem of the form 
+\par An optimization problem of the form 
 \begin{equation}
     \label{eq:opt_prob_without_log_bar}
     \begin{aligned}
@@ -134,8 +134,8 @@ Spatial deconfliction is appropriate for \ac{PF} and imposes the constraint that
 
 \subsection{Sampling Trajectories}
 
-\par The most straightforward way to calculate the minimum distance between two trajectories is to sample each trajectory and calculate the euclidean distance between time equivalent samples; the smallest value being the minimum distance. The smallest yields the shortest distance. This method, however, is not perfect because the finer the samples, the higher the computational cost will be. However, high accuracy in the calculation of the minimum distance between trajectories in not necessary. If, besides knowing the position of the vehicle at a sample, we also know the maximum tangent speed between that sample and the next, then the distance to the other vehicle cannot deviate more than a certain determinable value between those 2 points. It will be smaller than the calculated distance if the vehicles are moving towards each other. The number of samples will determine how large this deviation can be. The optimisation algorithm will stop once it finds a minimum distance that is greater than a certain value. This implies that the number of samples must be large enough such that the deviation is relatively small when compared to the desired minimum distance. 
-\par For example, consider a minimum distance of \SI{1}{meter} between two vehicles which have maximum velocities \SI{1}{\meter\per\second}. At a certain moment between two samples, the vehicles could be closer to each other than they are at the samples. Consider the worst case scenario: during half of the time interval between samples the vehicles move towards each other at maximum velocity  and half the time they move away from each other as illustrated in figure \ref{fig:theworstcasescenario}. If the time sample is \SI{10}{\milli\second}, during \SI{5}{\milli\second} the vehicles can travel \SI{1}{\centi\meter} towards each other, at the relative speed of \SI{2}{\meter\per\second}, which is a \SI{1}{\percent} deviation from the established minimum distance of \SI{1}{\meter}. If the optimisation problem is reformulated to guarantee \SI{1.01}{\meter}of separation, then, with samples spaced by \SI{10}{\milli\second}, a successful optimisation solution guarantees a minimum distance between vehicles of \SI{1}{\meter}. which means a total of 100 samples per second of runtime.
+\par The most straightforward way to calculate the minimum distance between two trajectories is to sample each trajectory and calculate the euclidean distance between time equivalent samples; the smallest value being the minimum distance. The smallest yields the shortest distance. This method, however, is not perfect because the finer the samples, the higher the computational cost will be. However, high accuracy in the calculation of the minimum distance between trajectories in not necessary. If, besides knowing the position of the vehicle at a sample, we also know the maximum tangent speed between that sample and the next, then the distance to the other vehicle cannot deviate more than a certain determinable value between those 2 points. It will be smaller than the calculated distance if the vehicles are moving towards each other. The number of samples will determine how large this deviation can be. The optimization algorithm will stop once it finds a minimum distance that is greater than a certain value. This implies that the number of samples must be large enough such that the deviation is relatively small when compared to the desired minimum distance. 
+\par For example, consider a minimum distance of \SI{1}{meter} between two vehicles which have maximum velocities \SI{1}{\meter\per\second}. At a certain moment between two samples, the vehicles could be closer to each other than they are at the samples. Consider the worst case scenario: during half of the time interval between samples the vehicles move towards each other at maximum velocity  and half the time they move away from each other as illustrated in figure \ref{fig:theworstcasescenario}. If the time sample is \SI{10}{\milli\second}, during \SI{5}{\milli\second} the vehicles can travel \SI{1}{\centi\meter} towards each other, at the relative speed of \SI{2}{\meter\per\second}, which is a \SI{1}{\percent} deviation from the established minimum distance of \SI{1}{\meter}. If the optimization problem is reformulated to guarantee \SI{1.01}{\meter} of separation, then, with samples spaced by \SI{10}{\milli\second}, a successful optimization solution guarantees a minimum distance between vehicles of \SI{1}{\meter}. which means a total of 100 samples per second of runtime.
 
 \begin{figure}
 \centering
@@ -148,13 +148,13 @@ Spatial deconfliction is appropriate for \ac{PF} and imposes the constraint that
 \subsection{Bezier Curve Distance to a Point}
 \label{sec:bezcurvetopoint}
 
-\par A second method to calculate the minimum distance between two trajectories is based on calculating the minimum distance between Bezier curves. \cite{chang2011computation} This algorithm is adapted to calculate the minimum distance between a curve and a convex shape. By subtracting the position vectors of one trajectory from the one trajectory from another, which for Bezier curves is explained in section \ref{sec:bezcurves}, finding the minimum distance between trajectories gets translated to finding the closest point of this subtraction curve to the origin which can be interpreted as a 1 point convex shape.
+\par A second method to calculate the minimum distance between two trajectories is based on calculating the minimum distance between Bezier curves \cite{chang2011computation}. This algorithm is adapted to calculate the minimum distance between a curve and a convex shape. By subtracting the position vectors of one trajectory from the one trajectory from another, which for Bezier curves is explained in section \ref{sec:bezcurves}, finding the minimum distance between trajectories gets translated to finding the closest point of this subtraction curve to the origin which can be interpreted as a 1 point convex shape.
 \par The algorithm consists of recursively breaking down the curve into two halves by obtaining a new set of control points for each half via de De Casteljau algorithm. For each half, two values are calculated: an upper and lower bounds for the minimum distance to the complex shape. The upper bound for the minimum distance will be the closest endpoint of the segment to the convex shape, the lower bound is the closest point of the convex hull of the new control points to the polygon. Both upper and lower bounds are calculated with the \acs{GJK} algorithm (see section \ref{sec:gjkalg}). The exit condition of the recursion is when the lower bound is approximately equal to the upper bound. The lower bound may be zero if the shapes intersect, which has no influence on the execution of the algorithm. If the exit condition is not met, the recursion is repeated and the returned value is the smallest of the upper bound along with the time at which the smallest value was found.
 
 \subsection{GJK Algorithm}
 \label{sec:gjkalg}
 
-\par The \ac{GJK} algorithm is an efficient algorithm to calculate minimum distance between arbitrary convex shapes in any dimension and is a necessary tool for calculating the minimum distance between a Bezier Curve and a point or convex shape.
+\par The \ac{GJK} algorithm \cite{gilbert1988fast} is an efficient algorithm to calculate minimum distance between arbitrary convex shapes in any dimension and is a necessary tool for calculating the minimum distance between a Bezier Curve and a point or convex shape.
 \par It relies heavily on a concept called the Minkowski Sum, but, because the difference operator is used for this algorithm instead of the sum, the term Minkowski difference will be used. For two shapes $A$ and $B$, their Minkowski Difference is given by
 \begin{equation}
     D = A - B = \{a-b|a\in A, b\in B\}
@@ -176,8 +176,8 @@ Figure \ref{fig:intersectingshapes} shows 2 shapes on the left hand-side which i
 
 \par If the Minkowski Difference contains the origin, then the two shapes have common points, i.e., intersect, because the resulting subtraction is zero. It is a two part problem: 
 \begin{enumerate}
-    \item detect intersection, by testing if the Minkowski Difference contains the origin
-    \item if no collision is confirmed, calculate the minimum distance between the shapes
+    \item detect intersection, by testing if the Minkowski Difference contains the origin;
+    \item if no collision is confirmed, calculate the minimum distance between the shapes.
 \end{enumerate}
 \par A convex shape with up to N+1 vertices in an N-dimensional space is known as a simplex. For 2-D Minkowski Differences, the simplices can be a point (1 vertex), a line segment (2 vertices) and a triangle (3 vertices). For 3-D spaces, the simplices can be the same as in 2-D spaces with the addition of a tetrahedron (4 vertices).
 \par The key to \ac{GJK}'s efficiency is to find points in the Minkowski difference that are the best candidates that form a simplex that can contain the origin. 
@@ -189,7 +189,7 @@ Figure \ref{fig:intersectingshapes} shows 2 shapes on the left hand-side which i
 \section{Minimum Distance to Convex Shapes}
 \label{sec:mindistconvshapes}
 
-\par Earlier, in section \ref{sec:bezcurvetopoint}, an algorithm to calculate the distance of a trajectory to a convex shape was presented. This algorithm, however, is limited to convex shapes that do not intersect with the trajectory. If the curve intersects with the convex shape, the algorithm returns zero as minimum distance. Optimisation algorithms, such as Sequential Quadratic Programming\cite{10.1007/978-0-387-35514-6_7}, require the derivative of the constraints to be non zero, even when the current guess for solution is not feasible because this derivate, in other words, will "inform" how far the control points must move so that the solution becomes feasible.
+\par Earlier, in section \ref{sec:bezcurvetopoint}, an algorithm to calculate the distance of a trajectory to a convex shape was presented. This algorithm, however, is limited to convex shapes that do not intersect with the trajectory. If the curve intersects with the convex shape, the algorithm returns zero as minimum distance. optimization algorithms, such as Sequential Quadratic Programming\cite{10.1007/978-0-387-35514-6_7}, require the derivative of the constraints to be non zero, even when the current guess for solution is not feasible because this derivate, in other words, will "inform" how far the control points must move so that the solution becomes feasible.
 
 \par A modification to the algorithm that calculates the minimum distance to a convex shape is presented here to calculate the intersection points between the curve and the shape. Afterwards, these intersection points are used to calculate a "penetration" of the curve in the shape.
 \par First thing to note is, during the recursion of the minimum distance algorithm, some endpoints of the cut segments will land inside the shape. If a segment has an endpoint inside and an endpoint outside the shape and the distance between these two points is approximately zero, then the point inside is added to a stack of intersecting points, otherwise, the recursion continues. If the control points of the recursive segments are partially in the shape while others are not, then the recursion continues, otherwise, if the control points are all outside or all inside the shape, then there is no point in continuing because the segment cannot contain any more intersection points.
@@ -216,8 +216,8 @@ A slight modification for the \ac{EPA} algorithm is proposed here. It will be re
 
 
 
-\section{Check Soundness of Solution}
+\section{Soundness of Solution}
 \label{sec:ivproblem}
 
-\par Once the optimisation process gets completed, the trajectory is defined along with, depending on the used model, the control points for the inputs which can then be re-plugged into the \ac{ODE} and check what resulting trajectory is obtained, this process is known as solving an \ac{IVP}. If the approximation is good enough, the resulting trajectory should be nearly identical to the the function for the trajectory. 
-\par Another strategy to check soundness is to feed the inputs to the dynamic system just as explained in the previous paragraph but, this time, calculate too a correction term for the inputs based on the error with the desired position, such as what is done in Trajectory Tracking.
+\par Once the optimization process is complete, the trajectory is defined along with, depending on the implemented model, the control points for the inputs which can then be re-plugged into the \ac{ODE} and check what resulting trajectory is obtained, this process is known as solving an \ac{IVP}. If the approximation is good enough, the resulting trajectory should be nearly identical to the the function for the trajectory. 
+\par Another strategy to check soundness is to feed the inputs to the dynamic system just as explained in the previous paragraph but, this time, a correction term is calculated as well for the inputs based on the error with the desired position, such as what is done in Trajectory Tracking.
