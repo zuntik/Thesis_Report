@@ -47,8 +47,8 @@ with $x_N: [0,T]\rightarrow \mathbb{R}^{n_x}$ and $u_N:[0,T]\rightarrow \mathbb{
     & \underset{\overline{x}_N^{[i]},\overline{u}_N^{[i]},i= 1,\dots N_v}{\text{minimize}} && \int_0^T \sum_{i=1}^{N_v}  L^{[i]} (\overline{x}_N^{[i]},\overline{u}_N^{[i]})dt + \Psi (x_{N,N}) \\
     & \text{subject to}  && \overline{x}^{[i]}_{0,N} = x_0^{[i]}, \\
         & && \overline{x}^{[i]}_{N,N} = x_f^{[i]}, \\
-        & && \sum_{k=0}^{N} \boldsymbol{D}_{j,k} \overline{x}_{k,N}^{[i]} = f^{[i]} (\overline{x}_{j,N},\overline{u}_{j,N}), &&& \forall j=0,\dots,N\
-        & && h(x(t),u(t)) \geq 0, \\
+		& && \sum_{k=0}^{N} \boldsymbol{D}_{j,k} \overline{x}_{k,N}^{[i]} = f^{[i]} (\overline{x}^{[i]}_{j,N},\overline{u}^{[i]}_{j,N}), &&& \forall j=0,\dots,N\\
+        & && h(\overline{x}_N,\overline{u}_N) \geq 0, \\
     \end{aligned}
 \end{equation}
 where $D_{j,k}$ is the $(j,k)$-th entry of the differentiation matrix $D_N = D_{N-1}E^N_{N-1}\in \mathbb{R}^{(N+1)\times(N+1)}$ that is obtained by combining the Bernstein differentiation matrix \eqref{eq:bernderivmat} with the Bernstein degree elevation matrix whose indices are given by \eqref{eq:bernsteinelevindices}.
