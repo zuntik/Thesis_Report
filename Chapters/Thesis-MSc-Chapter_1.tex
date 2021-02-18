@@ -32,13 +32,13 @@
 \par Direct Methods, on the other hand, are based on transcribing infinite optimal control problems into finite-dimensional \acp{NLP} using some kind of paramerisation (e.g., polynomial approximation or piecewise constant parameterization). They can be solved using ready-to-use NLP solvers (e.g. MATLAB) and do not require the computation of co-state and adjoint variables as Indirect Methods do.
 \par The focus on the work of this project is on the use of Direct Methods. Several parameterization methods are explored, such as piece-wise constants inputs, polynomials, and the use of Bernstein polynomials.
 \par When solving an optimization problem, a model must be chosen for each vehicle. 
-Different models are defined by different numbers of states and inputs and different dynamic equations. The choice of model will affect the complexity of the optimization problem. However, if the model is too simple, it may not accurately describe the real vehicle's dynamics. The Direct Methods that are tested focus on two models, the Medusa model \cite{abreu2016medusa} or the simpler Dubin's car model \cite{Reeds1990OPTIMALPF}.
+Different models are defined by different numbers of states and inputs and different dynamic equations. The choice of model will affect the complexity of the optimization problem. However, if the model is too simple, it may not accurately describe the real vehicle's dynamics. The Direct Methods that are tested focus on two models, the Medusa model \cite{abreu2016medusa} or the simpler Dubins' Car model \cite{Reeds1990OPTIMALPF}.
 
 
 \section{Objectives}
 
 \par The work presented in this thesis focuses on the use of Direct Methods.
-\par There are several Direct Methods for trajectory optimization, for example, single and multiple shooting, collocation and quadratic programming. However, polynomial methods based on Bezier curves are particularly advantageous because they have favourable geometric properties which allow the efficient computation of the minimum distance between trajectories. As the complexity of the polynomials increases, the solutions converge to the optimal. \cite{cichella2018bernstein}
+\par There are several Direct Methods for trajectory optimization, for example, single and multiple shooting, collocation and quadratic programming. However, polynomial methods based on Bézier curves are particularly advantageous because they have favourable geometric properties which allow the efficient computation of the minimum distance between trajectories. As the complexity of the polynomials increases, the solutions converge to the optimal. \cite{cichella2018bernstein}
 \par An Optimal Control Problem's cost can be constructed based on several criteria such as consumed energy. For \textit{cooperative} motion planning, the cost will have to be constructed differently because it will have to take into account the motion of the multiple vehicles at once, in particular, possible inter-vehicle collision.
 \par The objectives of this work include
 \begin{itemize}

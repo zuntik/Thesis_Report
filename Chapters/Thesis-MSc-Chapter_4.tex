@@ -20,10 +20,10 @@
 \begin{equation}
     \label{eq:multi_cost}
     \begin{aligned}
-    & \underset{x^{[i]}(.),u^{[i]}(.),i= 1,\dots N_v}{\text{minimize}} && \int_0^T \sum_{i=1}^{N_v}  L_i (x^{[i]}(t),u^{[i]}(t))dt + \Psi (x^{[i]}(T)) \\
+    & \underset{x^{[i]}(.),u^{[i]}(.),i= 1,\dots N_v}{\text{minimize}} && \sum_{i=1}^{N_v} \left(\int_0^T L_i (x^{[i]}(t),u^{[i]}(t))dt + \Psi (x^{[i]}(T)) \right)\\
     & \text{subject to}  && x^{[i]}(0) = x_0^{[i]}, \\
         & && r^{[i]}(x^{[i]}(T)) = 0, \\
-        & && \dot{x}^{[i]} = f^{[i]} (x^{[i]}(t), u^{[i]}(t)), &&& t \in [0,T]\\
+        & && \dot{x}^{[i]}(t) = f^{[i]} (x^{[i]}(t), u^{[i]}(t)), &&& t \in [0,T]\\
         & && h(x(t),u(t)) \geq 0, \\
     \end{aligned}
 \end{equation}
@@ -34,8 +34,8 @@ with the same definitions as in section \ref{sec:optimprob_intro} applied to eac
 \par Let $t_0$, $t_1$, ..., $t_N$ be a set of equidistant \textit{time nodes} such that $t_j= j\frac{t_N}{N}$, with $T>0$. By following the notation of Bernstein polynomials:
 \begin{equation}
     \begin{gathered}
-        x^{[i]}(t) \approx x_N(t) = \sum_{j=0}^N \overline{x}^{[i]}_{j,N} b_{j,N}(t), \quad t\in[0,T] \\
-        u^{[i]}(t) \approx u_N(t) = \sum_{j=0}^N \overline{u}^{[i]}_{j,N} b_{j,N}(t), \quad t\in[0,T]
+        x^{[i]}(t) \approx x_N^{[i]}(t) = \sum_{j=0}^N \overline{x}^{[i]}_{j,N} b_{j,N}(t), \quad t\in[0,T] \\
+        u^{[i]}(t) \approx u_N^{[i]}(t) = \sum_{j=0}^N \overline{u}^{[i]}_{j,N} b_{j,N}(t), \quad t\in[0,T]
     \end{gathered}
 \end{equation}
 with $x_N: [0,T]\rightarrow \mathbb{R}^{n_x}$ and $u_N:[0,T]\rightarrow \mathbb{R}^{n_u}$. In this equation above, $\overline{x}_{j,N}\in \mathbb{R}^{n_x}$ and $\overline{u}_{j,N}\in \mathbb{R}^{n_u}$ are Bernstein coefficients. Let $\overline{x}_N\in \mathbb{R}^{n_x\times (N+1)}$ and $\overline{u}_N\in \mathbb{R}^{n_u}\times(N+1)$ be defined as $\overline{x}_N = [\overline{x}_{0,N},\dots, \overline{x}_{N,N}]$, and $\overline{u}_N = [\overline{u}_{0,N},\dots, \overline{u}_{N,N}]$
@@ -44,7 +44,7 @@ with $x_N: [0,T]\rightarrow \mathbb{R}^{n_x}$ and $u_N:[0,T]\rightarrow \mathbb{
 \begin{equation}
     \label{eq:multi_cost_bern}
     \begin{aligned}
-    & \underset{\overline{x}_N^{[i]},\overline{u}_N^{[i]},i= 1,\dots N_v}{\text{minimize}} && \int_0^T \sum_{i=1}^{N_v}  L^{[i]} (\overline{x}_N^{[i]},\overline{u}_N^{[i]})dt + \Psi (x_{N,N}) \\
+    & \underset{\overline{x}_N^{[i]},\overline{u}_N^{[i]},i= 1,\dots N_v}{\text{minimize}} && \sum_{i=1}^{N_v} \left( \int_0^T L^{[i]} (\overline{x}_N^{[i]},\overline{u}_N^{[i]})dt + \Psi (\overline{x}_{N,N}) \right) \\
     & \text{subject to}  && \overline{x}^{[i]}_{0,N} = x_0^{[i]}, \\
         & && \overline{x}^{[i]}_{N,N} = x_f^{[i]}, \\
 		& && \sum_{k=0}^{N} \boldsymbol{D}_{j,k} \overline{x}_{k,N}^{[i]} = f^{[i]} (\overline{x}^{[i]}_{j,N},\overline{u}^{[i]}_{j,N}), &&& \forall j=0,\dots,N\\
@@ -84,7 +84,7 @@ becomes
 \end{equation}
 \par Given that the inequality constraint functional must be negative for the solution to be feasible, $\beta_\delta(-c_j(\cdot))$ must be nearly constant for positive values. One possible log barrier functional can be
 \begin{equation}
-    \beta_\delta (z) = 
+    \beta_\sigma (z) = 
     \begin{cases}
         -\log{} z & z>\delta \\
         \frac{k-1}{k}\left[\left(\frac{z-k\delta}{(k-1)\delta}\right)^k-1\right]-\log{}\delta & z\leq \delta
@@ -93,7 +93,7 @@ becomes
 which is continuous and whose derivative around $z=\delta$ is also continuous too. \cite{hauser2006barrier}.
 \par The "hockey stick" function, with form given by
 \begin{equation}
-    \delta(z)= \begin{cases}
+    \sigma(z)= \begin{cases}
         \tanh(z), & z\leq 0 \\
         z, & z<0
     \end{cases}
@@ -145,16 +145,16 @@ Spatial deconfliction is appropriate for \ac{PF} and imposes the constraint that
 \end{figure}
 
 
-\subsection{Bezier Curve Distance to a Point}
+\subsection{Bézier Curve Distance to a Point}
 \label{sec:bezcurvetopoint}
 
-\par A second method to calculate the minimum distance between two trajectories is based on calculating the minimum distance between Bezier curves \cite{chang2011computation}. This algorithm is adapted to calculate the minimum distance between a curve and a convex shape. By subtracting the position vectors of one trajectory from the one trajectory from another, which for Bezier curves is explained in section \ref{sec:bezcurves}, finding the minimum distance between trajectories gets translated to finding the closest point of this subtraction curve to the origin which can be interpreted as a 1 point convex shape.
+\par A second method to calculate the minimum distance between two trajectories is based on calculating the minimum distance between Bézier curves \cite{chang2011computation}. This algorithm is adapted to calculate the minimum distance between a curve and a convex shape. By subtracting the position vectors of one trajectory from the one trajectory from another, which for Bézier curves is explained in section \ref{sec:bezcurves}, finding the minimum distance between trajectories gets translated to finding the closest point of this subtraction curve to the origin which can be interpreted as a 1 point convex shape.
 \par The algorithm consists of recursively breaking down the curve into two halves by obtaining a new set of control points for each half via de De Casteljau algorithm. For each half, two values are calculated: an upper and lower bounds for the minimum distance to the complex shape. The upper bound for the minimum distance will be the closest endpoint of the segment to the convex shape, the lower bound is the closest point of the convex hull of the new control points to the polygon. Both upper and lower bounds are calculated with the \acs{GJK} algorithm (see section \ref{sec:gjkalg}). The exit condition of the recursion is when the lower bound is approximately equal to the upper bound. The lower bound may be zero if the shapes intersect, which has no influence on the execution of the algorithm. If the exit condition is not met, the recursion is repeated and the returned value is the smallest of the upper bound along with the time at which the smallest value was found.
 
 \subsection{GJK Algorithm}
 \label{sec:gjkalg}
 
-\par The \ac{GJK} algorithm \cite{gilbert1988fast} is an efficient algorithm to calculate minimum distance between arbitrary convex shapes in any dimension and is a necessary tool for calculating the minimum distance between a Bezier Curve and a point or convex shape.
+\par The \ac{GJK} algorithm \cite{gilbert1988fast} is an efficient algorithm to calculate minimum distance between arbitrary convex shapes in any dimension and is a necessary tool for calculating the minimum distance between a Bézier Curve and a point or convex shape.
 \par It relies heavily on a concept called the Minkowski Sum, but, because the difference operator is used for this algorithm instead of the sum, the term Minkowski difference will be used. For two shapes $A$ and $B$, their Minkowski Difference is given by
 \begin{equation}
     D = A - B = \{a-b|a\in A, b\in B\}

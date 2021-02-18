@@ -15,7 +15,7 @@
     \begin{aligned}
     & \underset{x(.),u(.)}{\text{minimise}} && J = \int_0^T L(x(t),u(t))dt + \Psi (x(T)) \ dt\\
     & \text{subject to}  && x(0) = x_0, \\
-        & && \dot{x} = f(x(t), u(t)), &&& t \in [0,T] \\ % &&&& \text{(fixed initial value)} \\
+        & && \dot{x}(t) = f(x(t), u(t)), &&& t \in [0,T] \\ % &&&& \text{(fixed initial value)} \\
         & && h(x(t),u(t)) \geq 0, &&&  t \in [0,T] \\ % &&&& \text{(ODE Model)}\\
         & && r(x(T)) = 0 % &&&& \text{(terminal constraints)} &&&&&
     \end{aligned}
@@ -87,7 +87,7 @@ where $\rho$ is a scalar that penalizes "energy" consumption.
 \par A \acl{LQR} is a technique applicable to linear dynamic systems of the form
 \begin{equation}
     \label{eq:dynamic_system}
-    \dot{x} = A x + B
+    \dot{x} = A x + B u
 \end{equation}
 using the same definitions as in section \ref{sec:optimprob_intro}.
 
@@ -110,7 +110,7 @@ where $K$ is given by
 where $P(t)$ is the solution of the differential Riccati equation \cite{riccati1724animadversiones}
 \begin{equation}
     \label{eq:p_diff_expression}
-    A^T P(t) + P(t) A - (P(t) B + N) R^{-1} (B^T P(t) + N^T) + Q = - \overline{P}(t)
+    A^T P(t) + P(t) A - (P(t) B + N) R^{-1} (B^T P(t) + N^T) + Q = - \dot{P}(t)
 \end{equation}
 with appropriate boundary conditions.
 
@@ -257,7 +257,7 @@ where the path cost $l_i$ can now be calculated for each time interval $t \in [t
 \begin{equation}
     \label{eq:gen_quad_prog}
     \begin{aligned}
-    & \underset{\overline{x}(.)}{\text{minimise}} && \frac{1}{2} \overline{x}^T H \overline{x} + f^T  \\
+    & \underset{\overline{x}(.)}{\text{minimise}} && \frac{1}{2} \overline{x}^T H \overline{x} + f^T \overline{x}  \\
     & \text{subject to} && A \cdot \overline{x} \leq b, \\
     & && Aeq \cdot \overline{x} = beq, \\
     & && lb \leq \overline{x} \leq ub
@@ -267,7 +267,7 @@ and are not specifically designed to tackle motion planning problems. The first 
 \par A discrete linear system can be represented as
 \begin{equation}
     \label{eq:discrete_state_space} 
-    \phi_{x_k} + \Gamma_{u_k} - x_{k+1} = 0,
+    \phi x_k + \Gamma u_k - x_{k+1} = 0,
 \end{equation}
 where $x_k$ and $u_k$ are the state and input, respectively, at discrete time $k$, and $\Phi$ and $\Gamma$ are state and input matrices, respectively of appropriate dimensions.
 \par The cost function to optimise that is equivalent to $\ref{eq:quadratic_cost}$ is given by
@@ -373,7 +373,7 @@ where $U_{\text{max}}$ and $U_{\text{min}}$ are given are given by $\pm 1$. Here
 \section{Monomial Polynomials}
 
 \par Another way to describe trajectories is by using polynomials. If an optimal trajectory can be modelled by a polynomial, then it can be parameterized in terms of the polynomial's coefficients. As a result, the optimization problem tends to have a much smaller search space compared to, for example, shooting methods because with a relatively low order of polynomial, a whole trajectory over time $t\in [0,T]$ can be obtained will a relatively good cost. 
-\par Polynomial methods are especially suited to deal with \textit{differentially flat systems} (see section \ref{sec:differentiallyflatsystems}). In differentially flat systems, the state and input variables can be directly expressed, without integrating any differential equation, in terms of the flat output and a finite number of its derivatives \cite{fliess1995flatness}. This means that with coefficients that describe just the flat output it is possible to describe all of the other variables of the system, thus resulting in a 
+\par Polynomial methods are especially suited to deal with \textit{differentially flat systems} (see section \ref{sec:differentiallyflatsystems}). In differentially flat systems, the state and input variables can be directly expressed, without integrating any differential equation, in terms of the flat output and a finite number of its derivatives \cite{fliess1995flatness}. This means that with coefficients that describe just the flat output it is possible to describe all of the other variables of the system, thus resulting in a optimization problem without any dynamic constraints.
 
 \par The solution provided by the Matlab function \texttt{fmincon} for the same double integrator problem of section \ref{sec:linearquadraticregulator} with this method will be a polynomial $\overline{p}$ for $x_1$. Once the optimal coefficients have been obtained the trajectories for $x_1$, $x_2$ and $u$ can be obtained by polynomial derivation and evaluation. This is possible because the system is differentially flat. These polynomials are related in the system of equations
 \begin{equation}
@@ -410,40 +410,40 @@ Computation time: \SI{1.33}{\second}}
 
 
 
-\section{Bezier Curves}
+\section{Bézier Curves}
 \label{sec:bezcurves}
-\par A Bezier curve is a parametric curve used in computer graphics and related fields. The curve, is named after Pierre Bezier, who used it in the 1960s for designing curves for the bodywork of Renault cars \cite{hazewinkelmichiel1997}.  Other uses include the design of computer fonts and animation \cite{hazewinkelmichiel1997}. 
-The mathematical basis for Bezier curves, the Bernstein polynomials, was established in 1912, but the polynomials were not applied to graphics until some 50 years later when mathematician Paul de Casteljau in 1959 developed de Casteljau's algorithm, a numerically stable method for evaluating the curves, and became the first to apply them to computer-aided design at French auto-maker Citroen \cite{GeraldFarin2002}. 
+\par A Bézier curve is a parametric curve used in computer graphics and related fields. The curve, is named after Pierre Bézier, who used it in the 1960s for designing curves for the bodywork of Renault cars \cite{hazewinkelmichiel1997}.  Other uses include the design of computer fonts and animation \cite{hazewinkelmichiel1997}. 
+The mathematical basis for Bézier curves, the Bernstein polynomials, was established in 1912, but the polynomials were not applied to graphics until some 50 years later when mathematician Paul de Casteljau in 1959 developed de Casteljau's algorithm, a numerically stable method for evaluating the curves, and became the first to apply them to computer-aided design at French auto-maker Citroen \cite{GeraldFarin2002}. 
 
 \par What follows is a brief summary of the type of Bernstein polynomials that are exploited in this study.
 
 \par A Bernstein polynomial is given by % represented as
 \begin{equation}
     \label{eq:bern_pol}
-    P(\tau) = \sum_{k=0}^n \overline{p}_k B_{k,n} (\tau), \qquad \tau\in [0,1]
+    p_N(\tau) = \sum_{k=0}^N \overline{p}_{k,N} B_{k,N} (\tau), \qquad \tau\in [0,1]
 \end{equation}
-where $n$ is the order of the polynomial and $\tau$ is the time contraction of $t$, given by 
+where $N$ is the order of the polynomial and $\tau$ is the time contraction of $t$, given by 
 \begin{equation}
     \tau = \frac{t}{T}, \qquad t\in [0,T].
     \label{eq:time_delay}
 \end{equation}
-\par The $p_k$ are the polynomial coefficients or \textit{control points}, and $b_k^n$ are the \textit{Bernstein Basis}, given by 
+\par The $\overline{p}_{k,N}$ are the polynomial coefficients or \textit{control points}, and $b_k^N$ are the \textit{Bernstein Basis}, given by 
 \begin{equation}
-	B^n_k {(\tau)} = \binom{n}{k} {(1 - \tau)}^{n-k} \tau^k
+	B^N_k {(\tau)} = \binom{N}{k} {(1 - \tau)}^{N-k} \tau^k
     \label{eq:bern_basis}
 \end{equation}
-As a result, a Bernstein polynomial of order $n$ is a linear combination of $(n+1)$ Bernstein basis with weights given by $p_k$. The Bernstein Basis, as a function of $\tau$, for 6 different orders, $n$, are shown in figure \ref{fig:bernsteinbasis}.
+As a result, a Bernstein polynomial of order $N$ is a linear combination of $(N+1)$ Bernstein basis with weights given by $p_{k,N}$. The Bernstein Basis, as a function of $\tau$, for 6 different orders, $N$, are shown in figure \ref{fig:bernsteinbasis}.
 
 \begin{figure}[h!]
 \centering
 \includegraphics[width=0.8\textwidth]{Images/bernstein_basis.jpg}
-\caption{Representation of the Bernstein Basis for $\tau \in [0,1]$ for orders $n=0\cdots 5$}
+\caption{Representation of the Bernstein Basis for $\tau \in [0,1]$ for orders $N=0\cdots 5$}
 \label{fig:bernsteinbasis}
 \end{figure}
 
-\par For a polynomial of order $n$, the $i \in {0 .. n}$ control points can be represented as a vector on a vector $p$. For example, if $p$ is given by 
+\par For a polynomial of order $N$, the $i \in {0 .. n}$ control points can be represented for vector form, for example, with $\overline{p}_N$ given by 
 \begin{equation}
-    \overline{p} = \begin{bmatrix}0\\ 0.5\\ 1\\ 0.7\\ 0.3\\ -0.7\\ -1\\ -0.5\\ -0.1\end{bmatrix},
+    \overline{p}_N = \begin{bmatrix}0\\ 0.5\\ 1\\ 0.7\\ 0.3\\ -0.7\\ -1\\ -0.5\\ -0.1\end{bmatrix},
 \end{equation}
 the plot of the polynomial given by these coefficients is shown in figure \ref{fig:generic_bezier}. The control points on vector $p$ are plotted along time in equidistant time nodes. What can be seen is that the control points "attract" the curve towards themselves.
 
@@ -454,8 +454,7 @@ the plot of the polynomial given by these coefficients is shown in figure \ref{f
 \label{fig:generic_bezier}
 \end{figure}
 
-
-\par Two or three Bernstein polynomials of the same order, i.e., same number of control points, can be plotted against each other within the time domain $\tau \in [0,1]$. The control points of the curves together form $n+1$ points in two or three dimensions. These two or three dimension polynomials are also known as Bezier curves. Figure \ref{fig:generic_bezier} shows a 2-D Bezier Curve, the control points which resulted in it are plotted too. The control points for this curve had a specific order on the underlying Bernstein Polynomial. Changing the oder of the control points on the polynomial will, as a result, produce a different Bezier curve, such as the one in figure \ref{fig:generic_bezier2D_reordered}, despite the control points being the same on the 2-D plot.
+\par Two or three Bernstein polynomials of the same order, i.e., same number of control points, can be plotted against each other within the time domain $\tau \in [0,1]$. The control points of the curves together form $n+1$ points in two or three dimensions. These two or three dimension polynomials are also known as Bézier curves. Figure \ref{fig:generic_bezier} shows a 2-D Bézier Curve, the control points which resulted in it are plotted too. The control points for this curve had a specific order on the underlying Bernstein Polynomial. Changing the oder of the control points on the polynomial will, as a result, produce a different Bézier curve, such as the one in figure \ref{fig:generic_bezier2D_reordered}, despite the control points being the same on the 2-D plot.
 
 \begin{figure}[h!]
 \centering
@@ -473,22 +472,22 @@ the plot of the polynomial given by these coefficients is shown in figure \ref{f
 
 
 \par One property than can be observed in figure~\ref{fig:generic_bezier} is that, within the domain $t \in [0,T]$, the polynomial is limited by a convex hull \cite{cichella2018bernstein} formed by the control points.
-\par The initial and final values of $P(t)$ in the interval $[0,T]$ are given by
+\par The initial and final values of $p_N(t)$ in the interval $[0,T]$ are given by
 \begin{equation}
     \label{eq:bern_in_fin}
     \begin{gathered}
-        P(0) = p_{n,0} \\
-        P(T) = p_{n,n}
+        p_N(0) = \overline{p}_{N,0} \\
+        p_N(T) = \overline{p}_{N,N}
     \end{gathered}
 \end{equation}
 and the derivative and integral are given by 
 \begin{equation}
     \label{eq:bern_deriv}
-    \dot{P}(t) = \frac{n}{T} \sum_{k=0}^{n-1} (p_{k+1,n} - p_{k,n}) B_{k,n-1}(t)
+    \dot{p}_N(t) = \frac{N}{T} \sum_{k=0}^{N-1} (\overline{p}_{k+1,N} - \overline{p}_{k,N}) B_{k,N-1}(t)
 \end{equation}
 \begin{equation}
     \label{eq:bern_int}
-    \int_0^T P(t)dt = \frac{T}{n+1} \sum_{k=0}^{n} p_{k,n}
+    \int_0^T p_N(t)dt = \frac{T}{N+1} \sum_{k=0}^{N} \overline{p}_{k,N}
 \end{equation}
 
 \par The control points for the derivative of a bernstein polynomial can be obtained my a multiplication of a derivation matrix by the control points of the original curve stored in the column vector, with the matrix given by 
@@ -505,9 +504,9 @@ and the derivative and integral are given by
 
 \par The control points of the Anti-Derivative/Primitive can be obtained similarly to the derivation by multiplying the control points to a primitive matrix \cite{privateconversationprimitive}, and adding a vector:
 \begin{equation}
-    p = A \cdot \dot{p}  + p_0
+    \overline{p}_N = A \cdot \dot{\overline{p}}_{N-1}  + \overline{p}_{0,N}
 \end{equation}
-where $p_0$ is the initial values of $P$ and the matrix A is given by 
+where $\overline{p}_{0,N}$ is the initial values of $p_N$ and the matrix A is given by 
 \begin{equation}
     \boldsymbol{A}_{N+1} = \begin{bmatrix}
         0 & 0 & \ldots & 0 & 0 \\
@@ -520,7 +519,7 @@ where $p_0$ is the initial values of $P$ and the matrix A is given by
 
 \par A Bernstein polynomial of degree $N$ and coefficients $p_{k,N}\in \mathbb{R}, k = 0,\dots,N$ can be expressed as a Bernstein polynomial of degree $M$ with $M>N$, with coefficients $p_{k,M} \in \mathbb{R}, k = 0,\dots,M$ given by 
 \begin{equation}
-    p_{k,M} = \sum_{j=\text{max}(0,k+M-N)}^{\text{min}(N,k)} \frac{{M-N \choose k-j}{N\choose j}}{{M\choose k}} p_{j,N} \in \mathbb{R}^n,
+    p_{k,M} = \sum_{j=\text{max}(0,k+M-N)}^{\text{min}(N,k)} \frac{{M-N \choose k-j}{N\choose j}}{{M\choose k}} p_{j,N} \in \mathbb{R}^N,
 \end{equation}
 which is known as degree elevation. In other words, it is possible find a polynomial with $M+1$ control points such that it's identical to a curve with order $N+1$ within time $t\in[0,T]$.
 \par The control points for the degree elevation can also be obtained by multiplying the control points vector by a matrix $\boldsymbol{E}$ whose indices are given by 
@@ -529,17 +528,15 @@ which is known as degree elevation. In other words, it is possible find a polyno
     \boldsymbol{E}_{ij} = \frac{{N\choose j}{M-N\choose i-j}}{{M\choose i}}
 \end{equation}
 
-
-%\par The cost function, which will be the same as previous the previous examples, (\ref{eq:my_cost}). In order to calculate it and take, equations \ref{eq:bern_mul} and \ref{eq:bern_sum} will be necessesary for summation and addition of Bernstein polynomials, respectfully.
 \par Multiplication and addition is given by
 \begin{equation}
     \label{eq:bern_mul}
-    f(t)g(t) = \sum^{m+n}_{i=0}  \left(\sum_{i=\text{max}(0,i-n)}^{\text{min}(m,i)} \frac{\binom{m}{j}\binom{n}{i-j}}{\binom{m+n}{i}} f_{j,m}g_{i-j,n}\right) B_{i,m+n}(t)
+    f_M(t)g_N(t) = \sum^{M+N}_{i=0}  \left(\sum_{i=\text{max}(0,i-N)}^{\text{min}(M,i)} \frac{\binom{M}{j}\binom{N}{i-j}}{\binom{M+N}{i}} \overline{f}_{j,M}\overline{g}_{i-j,N}\right) B_{i,M+N}(t)
 \end{equation}
 \begin{equation}
     \label{eq:bern_sum}
-    f(t)\pm g(t) = 
-    \sum^{m}_{i=0}  \left(f_{i,n} \pm \sum_{j=\text{max}(0,i-m+n)}^{\text{min}(n,i)} \frac{\binom{n}{j}\binom{m-n}{i-j}}{\binom{m}{i}} g_{j,n}\right) B_{i,m+n}(t)
+    f_M(t)\pm g_N(t) = 
+    \sum^{M}_{i=0}  \left(\overline{f}_{i,N} \pm \sum_{j=\text{max}(0,i-M+N)}^{\text{min}(N,i)} \frac{\binom{N}{j}\binom{M-N}{i-j}}{\binom{M}{i}} \overline{g}_{j,N}\right) B_{i,M+N}(t)
 \end{equation}
 
 \par The De Casteljau's algorithm \cite{shene2012finding} is a recursive method to evaluate polynomials in Bernstein form. A geometric interpretation of this algorithm presented as follows:
@@ -550,20 +547,20 @@ which is known as degree elevation. In other words, it is possible find a polyno
 \end{enumerate}
 
 Figure~\ref{fig:deCasteljau} illustrates the breakdown of the control points into polygons and sub polygons. 
-\par The evaluation of the curve can be carried out analytically. For a Bernstein Polynomial $\boldsymbol{x}_N:[0,t_f]\rightarrow \mathbb{R}^n$, and a scaler $t_{div}\in [0,t_f]$, the Bernstein polynomial at $t_{div}$ can be computed using the following recursive relation:
+\par The evaluation of the curve can be carried out analytically. For a Bernstein Polynomial $p_N:[0,T]\rightarrow \mathbb{R}^N$, and a scaler $t_{div}\in [0,T]$, the Bernstein polynomial at $t_{div}$ can be computed using the following recursive relation:
 \begin{equation}
 \begin{gathered}
-    \overline{\boldsymbol{x}}^{[0]}_{i,N} = \overline{\boldsymbol{x}}_{i,N},\quad i=0,\dots, N  \\
-    \overline{\boldsymbol{x}}^{[j]}_{i,N} = \overline{\boldsymbol{x}}^{[j-1]}_{i,N} \frac{t_f-t_{div}}{t_f} + \overline{\boldsymbol{x}}^{[j-1]}_{i+1,N} \frac{t_{div}}{t_f}
+    \overline{p}^{[0]}_{i,N} = \overline{p}_{i,N},\quad i=0,\dots, N  \\
+    \overline{p}^{[j]}_{i,N} = \overline{p}^{[j-1]}_{i,N} \frac{t_f-t_{div}}{t_f} + \overline{p}^{[j-1]}_{i+1,N} \frac{t_{div}}{t_f}
 \end{gathered}
 \end{equation}
 with $i=0,\dots, N-j$, and $j=1,\dots, N$. Then, the Bernstein polynomial evaluated at $t_{div}$ is given by
 \begin{equation}
-    \overline{\boldsymbol{x}}_N(t_{div}) = \overline{\boldsymbol{x}}_{0,N}^{[N]}.
+    \overline{p}_N(t_{div}) = \overline{p}_{0,N}^{[N]}.
 \end{equation}
 Moreover, the Bernstein polynomial can be subdivided at $t_{div}$ into two $N$th order Bernstein polynomial with Bernstein coefficients
 \begin{equation}
-    \overline{\boldsymbol{x}}^{[0]}_{0,N}, \overline{\boldsymbol{x}}^{[1]}_{0,N}, \dots, \overline{\boldsymbol{x}}^{[N]}_{0,N}, \quad \text{and}\quad \overline{\boldsymbol{x}}^{[N]}_{0,N}, \overline{\boldsymbol{x}}^{[N-1]}_{0,N}, \dots, \overline{\boldsymbol{x}}^{[0]}_{0,N}.
+    \overline{p}^{[0]}_{0,N}, \overline{p}^{[1]}_{0,N}, \dots, \overline{p}^{[N]}_{0,N}, \quad \text{and}\quad \overline{p}^{[N]}_{0,N}, \overline{p}^{[N-1]}_{0,N}, \dots, \overline{p}^{[0]}_{0,N}.
 \end{equation}
 
 \begin{figure}[h!]
@@ -584,7 +581,6 @@ Moreover, the Bernstein polynomial can be subdivided at $t_{div}$ into two $N$th
 The convex hull property of these polynomials will prove useful in an algorithm that calculates distance between curves, which will be used in deconfliction of trajectories in multiple vehicle control. By just knowing the position of the control points in the space, it is possible to guarantee constraint satisfaction in the whole trajectory and not just in the control points.
 
 \par Just as with monomial polynomials, when these Bernstein polynomials are applied to differentially flat systems, a reduction of the number of parameters to optimise is possible because with just a flat output, all state variables can be derived. If the system is not differentially flat, then parameters for all state variables need to be defined and optimised but will be subject to the constrained imposed by the system's dynamics.
-%The optimization problems developed for motion planning in this study center around the use of what is known as Bernstein polynomials.
 
 \par The solution obtained by the Matlab function \texttt{fmincon} for the same double integrator problem of section \ref{sec:linearquadraticregulator} with this Bernstein polynomial based approach will provide the coefficients $\overline{p}$ for the Bernstein polynomial of state variable $x_1$. 
 
@@ -596,7 +592,7 @@ The convex hull property of these polynomials will prove useful in an algorithm 
     \underbrace{\begin{bmatrix}
         1 & 0 & 0 & \dots & 0 \\
         \frac{n}{T} & -\frac{n}{T} & 0 & \dots & 0 \\
-        0 & 0 & 0 & \dots & 1 \end{bmatrix}}_{\text{Aeq}_{\text{1D}}} \overline{p} =
+        0 & 0 & 0 & \dots & 1 \end{bmatrix}}_{\text{Aeq}_{\text{1D}}} \overline{p}_N =
     \underbrace{\begin{bmatrix}
         x_0^i \\ x_1^i \\ 0\end{bmatrix}}_{\text{beq}_{\text{1D}}}
 \end{equation}
@@ -614,7 +610,7 @@ The convex hull property of these polynomials will prove useful in an algorithm 
 
 \par A nonlinear system of the form
 \begin{equation}
-    \dot{x} = f(x(t),u(t)), \quad x(t) \in \mathbb{R}^n
+    \dot{x(t)} = f(x(t),u(t)), \quad x(t) \in \mathbb{R}^n
 \end{equation}
 is said to be \textit{differentially flat} \cite{fliess1995flatness} or simply \textit{flat} if there exists a set of variables $y = (y_1, \dots, y_m)$ called the \textit{flat output}, such that
 \begin{itemize}

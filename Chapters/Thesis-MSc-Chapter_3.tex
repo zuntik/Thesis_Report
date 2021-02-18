@@ -8,7 +8,7 @@
 % The following line allows to ref this chapter
 \label{chap:autonomousvehiclemodels}
 
-\par In this chapter equations that rule the motion of an autonomous marine vehicle are derived. But first, the coordinate frames will be defined (\ref{sec:refframes}). Afterwards, the motion equations for the Medusa model are presented (\ref{sec:medusamodelequations}). Finally, the simpler Dubin's car model is presented (\ref{sec:dubincarequations}).
+\par In this chapter equations that rule the motion of an autonomous marine vehicle are derived. But first, the coordinate frames will be defined (\ref{sec:refframes}). Afterwards, the motion equations for the Medusa model are presented (\ref{sec:medusamodelequations}). Finally, the simpler Dubins' car model is presented (\ref{sec:dubincarequations}).
 \par This chapter will focus primarily on dynamics in a two dimensional space.
 
 \section{Reference Frames and Notation}
@@ -207,7 +207,7 @@ The previous dynamic equations \eqref{eq:simple_medusa_dynamics} become
 \end{equation}
 where the expressions for masses and drags remain the same as in \eqref{eq:medusa_masses_and_drags}.
 
-\subsection{The "Somewhat" Differentially Flat Property}
+\subsection{The Differentially Flat Property for the Medusa Model}
 
 \par If the states $x$, $y$ and $\psi$ are interpreted as flat outputs, then the Medusa model can be interpreted as differentially flat \cite{privateconversationprimitive}. All other variables can be obtained with rearranging the kinematics and dynamics:
 \begin{equation}
@@ -261,12 +261,12 @@ and the  inputs from the dynamics:
 because this equation is what guarantees $\tau_v = 0$. 
 
 
-\section{Dubin's Car Model}
+\section{Dubins' Car Model}
 \label{sec:dubincarequations}
 
-\par The Medusa model can be even further simplified by a Dubin's Car.
-\par In geometry, the term Dubin's path typically refers to the shortest curve that connects two points in the two-dimensional Euclidean plane (i.e. x-y plane) with a constraint on the curvature of the path and with prescribed initial and terminal tangents to the path, and an assumption that the vehicle travelling the path can only travel forward \cite{Reeds1990OPTIMALPF}. 
-\par A Dubin's car is a simple model for a vehicle that transverses a Dubin's path.
+\par The Medusa model can be even further simplified by a Dubins' Car.
+\par In geometry, the term Dubins' path typically refers to the shortest curve that connects two points in the two-dimensional Euclidean plane (i.e. x-y plane) with a constraint on the curvature of the path and with prescribed initial and terminal tangents to the path, and an assumption that the vehicle travelling the path can only travel forward \cite{Reeds1990OPTIMALPF}. 
+\par A Dubins' Car is a simple model for a vehicle that transverses a Dubins' path.
 \par The main difference compared with the Medusa Model is that this will does not possess the possibility of side slip, therefore, less variables and dynamics equations will be necessary which will translate to a smaller computation time.
 
 \par A simple kinematic car model for the systems is: 
